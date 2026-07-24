@@ -1,6 +1,136 @@
-def main():
-    print("Hello from python-learning-tkinter!")
+import tkinter as tk
+import ctypes # 日本語入力時のIMEの文字サイズずれ防止
 
+
+# ==================================
+# 日本語入力時のIMEの文字サイズずれ防止
+# ==================================
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(1)
+except Exception:
+    pass
+
+
+from src.gui.frams.log_in_frame import LogInFrame
+from src.gui.pages.home_frame import MainFrame
+
+
+
+# ==================================
+# Appクラス
+# ==================================
+
+class App(tk.Tk):
+
+    def __init__(self):
+
+        super().__init__()
+
+        # =========================
+        # root設定
+        # =========================
+
+        width = 800
+        height = 600
+
+        self.resizable(
+            False,
+            False
+        )
+
+
+        # 画面サイズ取得
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+
+        # 中央座標計算
+        x = (screen_width - width) // 2
+        y = (screen_height - height) // 2
+
+
+        self.geometry(
+            f"{width}x{height}+{x}+{y}"
+        )
+
+
+        # rootサイズ追従
+        self.rowconfigure(
+            0,
+            weight=1
+        )
+
+        self.columnconfigure(
+            0,
+            weight=1
+        )
+
+
+        # =========================
+        # Frame作成
+        # =========================
+
+        self.frames = {}
+
+
+        for FrameClass in (
+            LogInFrame,
+            MainFrame
+        ):
+
+            frame = FrameClass(self)
+
+            self.frames[FrameClass.__name__] = frame
+
+
+            frame.grid(
+                row=0,
+                column=0,
+                sticky="nsew"
+            )
+
+
+        # 最初はログイン画面
+        self.show_frame(
+            "MainFrame"
+        )
+
+
+    # =========================
+    # 画面切替
+    # =========================
+
+    def show_frame(self, name):
+
+        frame = self.frames[name]
+
+
+        frame.tkraise()
+
+
+        # タイトル変更
+
+        if name == "LogInFrame":
+
+            self.title(
+                "【備品管理システム】- [ログイン画面]"
+            )
+
+        elif name == "MainFrame":
+
+            self.title(
+                "【備品管理システム】- [ホーム画面]"
+            )
+
+
+
+
+# ==================================
+# 起動
+# ==================================
 
 if __name__ == "__main__":
-    main()
+
+    app = App()
+
+    app.mainloop()
