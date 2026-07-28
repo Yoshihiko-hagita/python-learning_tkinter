@@ -11,9 +11,10 @@ except Exception:
     pass
 
 
-from src.gui.frams.log_in_frame import LogInFrame
-from src.gui.pages.home_frame import MainFrame
-
+from src.gui.frames.log_in_frame import LogInFrame
+from src.gui.frames.contents.home_frame import HomeFrame
+from src.gui.frames.contents.user_management_frame import UserManagementFrame
+from src.gui.frames.contents.user_register_frame import UserRegisterFrame
 
 
 # ==================================
@@ -75,7 +76,9 @@ class App(tk.Tk):
 
         for FrameClass in (
             LogInFrame,
-            MainFrame
+            HomeFrame,
+            UserManagementFrame,
+            UserRegisterFrame
         ):
 
             frame = FrameClass(self)
@@ -92,7 +95,7 @@ class App(tk.Tk):
 
         # 最初はログイン画面
         self.show_frame(
-            "MainFrame"
+            "UserManagementFrame"
         )
 
 
@@ -100,10 +103,12 @@ class App(tk.Tk):
     # 画面切替
     # =========================
 
-    def show_frame(self, name):
+    def show_frame(self, name, **kwargs):
 
         frame = self.frames[name]
 
+        if hasattr(frame, "on_show"):
+            frame.on_show(**kwargs)
 
         frame.tkraise()
 
@@ -116,11 +121,23 @@ class App(tk.Tk):
                 "【備品管理システム】- [ログイン画面]"
             )
 
-        elif name == "MainFrame":
+        elif name == "HomeFrame":
 
             self.title(
                 "【備品管理システム】- [ホーム画面]"
             )
+        elif name == "UserManagementFrame":
+
+            self.title(
+                "【備品管理システム】- [ユーザー管理画面]"
+            )
+        elif name == "UserRegisterFrame":
+
+            self.title(
+                "【備品管理システム】- [ユーザー新規登録画面]"
+            )
+            
+
 
 
 

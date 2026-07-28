@@ -1,6 +1,9 @@
 import tkinter as tk
+import bcrypt
+
 from tkinter import ttk
 from tkinter import messagebox
+from src.db.sql import get_user
 
 class LogInFrame(tk.Frame):
 
@@ -248,9 +251,41 @@ class LogInFrame(tk.Frame):
     #==================================================
 
     def login(self):
+
         if not self.check_login():
             return
-        app = self.master
-        app.show_frame(
-        "MainFrame"
-    )
+
+        employee_id = self.entry_id.get()
+        password = self.entry_password.get()
+
+        user = get_user(employee_id)
+
+        # 社員IDが存在しない
+        if user is None:
+
+            messagebox.showerror(
+                "ログインエラー",
+                "社員IDまたはパスワードが違います。"
+            )
+
+            return
+
+        # password_hash取得
+        password_hash = user[2]
+
+        # パスワード照合
+        if not bcrypt.checkpw(
+            password.encode("utf-8"),
+            password_hash.encode("utf-8")
+        ):
+
+            messagebox.showerror(
+                "ログインエラー",
+                "社員IDまたはパスワードが違います。"
+            )
+
+            return
+
+        self.master.show_frame(
+            "HomeFrame"
+        )

@@ -1,14 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
 
-class SideFrame(tk.Frame):
+
+class SideMenuFrame(tk.Frame):
 
     def __init__(self, parent):
 
         super().__init__(
             parent,
             width=180,
-            bg="#E8E8E8"
+            bg="#7F7C7C"
         )
 
         self.pack_propagate(False)
@@ -20,7 +21,7 @@ class SideFrame(tk.Frame):
             ("貸出", "RentalFrame"),
             ("返却", "ReturnFrame"),
             ("履歴", "HistoryFrame"),
-            ("ユーザー管理", "UserManageFrame")
+            ("ユーザー管理", "UserManagementFrame")
         ]
 
         for text, frame_name in menu_list:
@@ -29,11 +30,12 @@ class SideFrame(tk.Frame):
                 self,
                 text=text,
                 command=lambda n=frame_name:
-                    parent.show_content(n)
+                    parent.master.show_frame(n)
             )
 
             btn.pack(
-                fill="x",
+                fill="x",#横幅を埋める
                 padx=5,
                 pady=2
             )
+
