@@ -59,7 +59,69 @@ def insert_user(
 
     conn.close()
 
-    
+# =========================
+# ユーザー更新
+# =========================
+def update_user(
+    employee_id,
+    user_name,
+    authority,
+    mail_address,
+    password_hash=None
+):
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
+
+    if password_hash:
+
+      sql = """
+      UPDATE tbl_users
+      SET
+          user_name = ?,
+          authority = ?,
+          mail_address = ?,
+          password_hash = ?,
+          updated_at = SYSDATETIME()
+      WHERE employee_id = ?
+      """
+      cursor.execute(
+          sql,
+          (
+              user_name,
+              authority,
+              mail_address,
+              password_hash,
+              employee_id
+          )
+      )
+
+    else:
+
+      sql = """
+      UPDATE tbl_users
+      SET
+          user_name = ?,
+          authority = ?,
+          mail_address = ?,
+          updated_at = SYSDATETIME()
+      WHERE employee_id = ?
+      """
+
+      cursor.execute(
+          sql,
+          (
+              user_name,
+              authority,
+              mail_address,
+              employee_id
+          )
+      )
+
+    conn.commit()
+
+    conn.close()
 
 # =========================
 # ユーザー取得
