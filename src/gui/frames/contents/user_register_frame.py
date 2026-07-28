@@ -2,7 +2,7 @@ import tkinter as tk
 import bcrypt
 from tkinter import ttk
 from tkinter import messagebox
-from src.db.sql import insert_user, get_user
+from src.db.sql import insert_user, get_user, update_user
 from src.gui.frames.sidemenu_frame import SideMenuFrame
 from src.service.user_service import get_user_info
 
@@ -500,131 +500,242 @@ class UserRegisterFrame(tk.Frame):
         password = self.new_entry_password.get()
         password_confirm = self.new_entry_password_confirm.get()
 
-        if password != password_confirm:
-            messagebox.showerror(
-                "入力エラー",
-                "パスワードが一致しません。"
-            )
+        if self.edit_mode:
 
-            self.new_entry_password.focus_set()
-            return
+            if not user_name:
 
-        password_hash = bcrypt.hashpw(
-            password.encode("utf-8"),
-            bcrypt.gensalt()
-        ).decode("utf-8")
+                messagebox.showerror(
+                    "入力エラー",
+                    "氏名を入力してください。"
+                )
 
-        # 社員ID
-        if not employee_id:
-            messagebox.showerror(
-                "入力エラー",
-                "社員IDを入力してください。"
-            )
+                self.new_entry_name.focus_set()
 
-            self.new_entry_id.focus_set()
-            return
-        
-        if len(employee_id) != 8:
+                return
+            
+            # メールアドレス形式チェック
+            if mail_address:
 
-            messagebox.showerror(
-                "入力エラー",
-                "社員IDは8文字で入力してください。"
-            )
-            return
+                if "@" not in mail_address:
 
-        # 社員ID重複チェック
-        user = get_user(employee_id)
+                    messagebox.showerror(
+                        "入力エラー",
+                        "メールアドレスの形式が正しくありません。"
+                    )
 
-        if user is not None:
+                    self.new_entry_mail.focus_set()
 
-            messagebox.showerror(
-                "入力エラー",
-                "その社員IDは既に登録されています。"
-            )
+                    return
+                
+            # パスワード変更時
+            if password:
 
-            self.new_entry_id.focus_set()
+                if password != password_confirm:
 
-            return
+                    messagebox.showerror(
+                        "入力エラー",
+                        "パスワードが一致しません。"
+                    )
 
-        # 氏名
-        if not user_name:
-            messagebox.showerror(
-                "入力エラー",
-                "氏名を入力してください。"
-            )
+                    self.new_entry_password.focus_set()
 
-            self.new_entry_name.focus_set()
-            return
+                    return
+                
+                else:
 
+                    password_hash = bcrypt.hashpw(
+                        password.encode("utf-8"),
+                        bcrypt.gensalt()
+                    ).decode("utf-8")
 
-        # パスワード
-        if not password:
-            messagebox.showerror(
-                "入力エラー",
-                "パスワードを入力してください。"
-            )
+                
+            if authority == "管理者":
+                authority = "ADMIN"
+            else:
+                authority = "USER"
 
-            self.new_entry_password.focus_set()
-            return
-        
-        if len(password) < 10:
+            if password:
 
-            messagebox.showerror(
-                "入力エラー",
-                "パスワードは10文字以上で入力してください。"
-            )
+                update_user(
+                    employee_id,
+                    user_name,
+                    authority,
+                    mail_address if mail_address else None,
+                    password_hash
+                )
 
-            self.new_entry_password.focus_set()
+            else:
 
-            return
-        
-        if not (
-                any(c.isupper() for c in password)
-                and any(c.islower() for c in password)
-                and any(c.isdigit() for c in password)
-                and ("-" in password or "@" in password)
-            ):
+                update_user(
+                    employee_id,
+                    user_name,
+                    authority,
+                    mail_address if mail_address else None
+                )
 
-            messagebox.showerror(
-                "入力エラー",
-                "パスワードは半角英大文字、半角英小文字、半角数字、記号(-、@)をそれぞれ1文字以上含めてください。"
-            )
-
-            self.new_entry_password.focus_set()
-
-            return
-
-        if authority == "管理者":
-            authority = "ADMIN"
-        else:
-            authority = "USER"
-
-        try:
-
-            insert_user(
-                employee_id,
-                user_name,
-                password_hash,
-                authority,
-                mail_address if mail_address else None
-            )
 
             messagebox.showinfo(
                 "完了",
-                "登録しました。"
+                "更新しました。"
             )
 
-        except Exception as e:
+            return
+        
+        else:
+        # ↓↓↓ここから下は今の新規登録処理↓↓↓
+            if password != password_confirm:
+                messagebox.showerror(
+                    "入力エラー",
+                    "パスワードが一致しません。"
+                )
 
-            messagebox.showerror(
-                "エラー",
-                str(e)
-        )
-                
+                self.new_entry_password.focus_set()
+                return
+
+            password_hash = bcrypt.hashpw(
+                password.encode("utf-8"),
+                bcrypt.gensalt()
+            ).decode("utf-8")
+
+            # 社員ID
+            if not employee_id:
+                messagebox.showerror(
+                    "入力エラー",
+                    "社員IDを入力してください。"
+                )
+
+                self.new_entry_id.focus_set()
+                return
+            
+            if len(employee_id) != 8:
+
+                messagebox.showerror(
+                    "入力エラー",
+                    "社員IDは8文字で入力してください。"
+                )
+                return
+
+            # 社員ID重複チェック
+            user = get_user(employee_id)
+
+            if user is not None:
+
+                messagebox.showerror(
+                    "入力エラー",
+                    "その社員IDは既に登録されています。"
+                )
+
+                self.new_entry_id.focus_set()
+
+                return
+
+            # 氏名
+            if not user_name:
+                messagebox.showerror(
+                    "入力エラー",
+                    "氏名を入力してください。"
+                )
+
+                self.new_entry_name.focus_set()
+                return
+
+
+            # パスワード
+            if not password:
+                messagebox.showerror(
+                    "入力エラー",
+                    "パスワードを入力してください。"
+                )
+
+                self.new_entry_password.focus_set()
+                return
+            
+            if len(password) < 10:
+
+                messagebox.showerror(
+                    "入力エラー",
+                    "パスワードは10文字以上で入力してください。"
+                )
+
+                self.new_entry_password.focus_set()
+
+                return
+            
+            if not (
+                    any(c.isupper() for c in password)
+                    and any(c.islower() for c in password)
+                    and any(c.isdigit() for c in password)
+                    and ("-" in password or "@" in password)
+                ):
+
+                messagebox.showerror(
+                    "入力エラー",
+                    "パスワードは半角英大文字、半角英小文字、半角数字、記号(-、@)をそれぞれ1文字以上含めてください。"
+                )
+
+                self.new_entry_password.focus_set()
+
+                return
+
+            if authority == "管理者":
+                authority = "ADMIN"
+            else:
+                authority = "USER"
+
+            try:
+
+                insert_user(
+                    employee_id,
+                    user_name,
+                    password_hash,
+                    authority,
+                    mail_address if mail_address else None
+                )
+
+                messagebox.showinfo(
+                    "完了",
+                    "登録しました。"
+                )
+
+            except Exception as e:
+
+                messagebox.showerror(
+                    "エラー",
+                    str(e)
+            )
+            
     # =========================
     # show処理
     # =========================
     def on_show(self, employee_id=None):
+        
+        # 新規モード
+        if employee_id is None:
+
+            self.edit_mode = False
+
+            self.nwe_register_frame.config(
+                text="ユーザー新規登録"        
+            )
+            self.button_new_cancel.config(
+                state="normal"
+            )
+            self.new_entry_id.config(
+                state="normal"
+            )
+
+            self.new_entry_id.delete(0, tk.END)
+            self.new_entry_name.delete(0, tk.END)
+            self.new_entry_mail.delete(0, tk.END)
+            self.new_entry_authority.current(1)
+            self.new_entry_password.delete(0, tk.END)
+            self.new_entry_password_confirm.delete(0, tk.END)
+            self.new_entry_id.focus_set()
+
+            return
+        
+        # 編集モード
+        self.edit_mode = True
 
         self.button_new_cancel.config(
             state="disabled"
@@ -670,6 +781,10 @@ class UserRegisterFrame(tk.Frame):
             self.new_entry_authority.set("管理者")
         else:
             self.new_entry_authority.set("一般")
+
+        self.new_entry_id.config(
+            state="readonly"
+        )
 
         self.new_entry_password.delete(0, tk.END)
         self.new_entry_password_confirm.delete(0, tk.END)
