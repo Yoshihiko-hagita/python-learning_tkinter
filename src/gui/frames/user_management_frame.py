@@ -1,28 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
 
-from src.gui.frames.sidemenu_frame import SideMenuFrame
+
 from src.service.user_service import get_user_list
+from src.gui.base_frame import BaseFrame
 
+class UserManagementFrame(BaseFrame):
 
-class UserManagementFrame(tk.Frame):
+    def __init__(self, parent,frame_manager):
 
-    def __init__(self, parent):
-
-        super().__init__(
-            parent,
-            bg="white"
-        )
-
-        #=========================
-        # サイドメニュー(左側)
-        #=========================
-        self.sidemenu_frame = SideMenuFrame(self)
-
-        self.sidemenu_frame.pack(
-            side="left",
-            fill="y"
-        )
+        super().__init__(parent,frame_manager,bg="white")
 
         #=========================
         # コンテンツ(右側)
@@ -136,7 +123,7 @@ class UserManagementFrame(tk.Frame):
         self.button_new = ttk.Button(
             serch_under_frame,
             text="新規登録" ,
-            command=lambda: self.master.show_frame("UserRegisterFrame")
+            command=lambda: self.frame_manager.show_frame("UserFormFrame",mode="New")
         )
 
         self.button_new.grid(
@@ -211,12 +198,13 @@ class UserManagementFrame(tk.Frame):
 
         employee_id = item["values"][0]
 
-        self.master.show_frame(
-            "UserRegisterFrame",
+        
+
+        self.frame_manager.show_frame(
+            "UserFormFrame",
+            mode = "Edit",
             employee_id=employee_id
         )
-        self.master.title(
-            "【備品管理システム】- [ユーザー編集画面]"
-        )
+
 
 

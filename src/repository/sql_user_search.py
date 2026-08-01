@@ -1,4 +1,4 @@
-from src.db.sql import get_connection
+from src.repository.sql import get_connection
 
 
 def search_user(employee_id):

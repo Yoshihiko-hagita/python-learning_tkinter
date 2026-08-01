@@ -1,5 +1,5 @@
-from src.db.sql_user_search import search_user
-from src.db.sql_user_get import get_user
+from src.repository.sql_user_search import search_user
+from src.repository.sql_user_get import get_user
 
 # 社員情報検索
 def get_user_list(employee_id):

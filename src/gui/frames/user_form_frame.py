@@ -1,30 +1,18 @@
 import tkinter as tk
 import bcrypt
+
 from tkinter import ttk
 from tkinter import messagebox
-from src.db.sql import insert_user, get_user, update_user
-from src.gui.frames.sidemenu_frame import SideMenuFrame
+from src.repository.sql import insert_user, get_user, update_user
 from src.service.user_service import get_user_info
+from src.gui.base_frame import BaseFrame
 
 
-class UserRegisterFrame(tk.Frame):
+class UserFormFrame(BaseFrame):
 
-    def __init__(self, parent):
+    def __init__(self, parent,frame_manager):
 
-        super().__init__(
-            parent,
-            bg="white"
-        )
-
-        #=========================
-        # サイドメニュー(左側)
-        #=========================
-        self.sidemenu_frame = SideMenuFrame(self)
-
-        self.sidemenu_frame.pack(
-            side="left",
-            fill="y"
-        )
+        super().__init__(parent,frame_manager,bg="white")
 
         #=========================
         # コンテンツ(右側)
@@ -40,14 +28,16 @@ class UserRegisterFrame(tk.Frame):
         )
 
         # =========================
-        # 新規登録フレーム
+        # フレーム
         # =========================
-        self.nwe_register_frame = ttk.LabelFrame(
+        
+
+        self.user_form_frame = ttk.LabelFrame(
             user_register_frame,
             text="ユーザー新規登録",
         )
 
-        self.nwe_register_frame.pack(
+        self.user_form_frame.pack(
             fill="both",
             padx=(5,5)
         )
@@ -57,7 +47,7 @@ class UserRegisterFrame(tk.Frame):
         # =========================
         # 社員ID 注意書き
         label_new_placeholder = tk.Label(
-            self.nwe_register_frame,
+            self.user_form_frame,
             text="※ (必須)半角英数字とハイフン(-)のみ入力可能です",
             font=("Meiryo UI", 8),
             fg="red"
@@ -71,7 +61,7 @@ class UserRegisterFrame(tk.Frame):
         )
         # 社員IDラベル
         label_new_id = tk.Label(
-            self.nwe_register_frame,
+            self.user_form_frame,
             text="社員ID         :",
             font=("Meiryo UI", 10)
         )
@@ -90,7 +80,7 @@ class UserRegisterFrame(tk.Frame):
         )
 
         self.new_entry_id = ttk.Entry(
-            self.nwe_register_frame,
+            self.user_form_frame,
             font=("Meiryo UI",12),
             width=20,
             validate="key",
@@ -111,7 +101,7 @@ class UserRegisterFrame(tk.Frame):
         # =========================
         # 氏名 注意書き
         label_newname_placeholder = tk.Label(
-            self.nwe_register_frame,
+            self.user_form_frame,
             text="※ (必須)",
             font=("Meiryo UI", 8),
             fg="red"
@@ -126,7 +116,7 @@ class UserRegisterFrame(tk.Frame):
         )
         # 氏名ラベル
         label_newname = tk.Label(
-            self.nwe_register_frame,
+            self.user_form_frame,
             text="氏 名        　　:",
             font=("Meiryo UI", 10)
         )
@@ -140,7 +130,7 @@ class UserRegisterFrame(tk.Frame):
 
         # 氏名入力
         self.new_entry_name = ttk.Entry(
-            self.nwe_register_frame,
+            self.user_form_frame,
             font=("Meiryo UI",12),
             width=20,
         )
@@ -156,7 +146,7 @@ class UserRegisterFrame(tk.Frame):
         # =========================
         # メール 注意書き
         label_newmail_placeholder = tk.Label(
-            self.nwe_register_frame,
+            self.user_form_frame,
             text="※ (任意)",
             font=("Meiryo UI", 8),
             fg="gray"
@@ -171,7 +161,7 @@ class UserRegisterFrame(tk.Frame):
         )
         # メールラベル
         label_newmail = tk.Label(
-            self.nwe_register_frame,
+            self.user_form_frame,
             text="メールアドレス   :",
             font=("Meiryo UI", 10)
         )
@@ -185,7 +175,7 @@ class UserRegisterFrame(tk.Frame):
 
         # メール入力
         self.new_entry_mail = ttk.Entry(
-            self.nwe_register_frame,
+            self.user_form_frame,
             font=("Meiryo UI",12),
             width=20,
         )
@@ -202,7 +192,7 @@ class UserRegisterFrame(tk.Frame):
         # =========================
         # 権限 注意書き
         label_newauthority_placeholder = tk.Label(
-            self.nwe_register_frame,
+            self.user_form_frame,
             text="※ (必須)",
             font=("Meiryo UI", 8),
             fg="red"
@@ -217,7 +207,7 @@ class UserRegisterFrame(tk.Frame):
         )
         # 権限ラベル
         label_newauthority = tk.Label(
-            self.nwe_register_frame,
+            self.user_form_frame,
             text="権 限          　:",
             font=("Meiryo UI", 10)
         )
@@ -231,7 +221,7 @@ class UserRegisterFrame(tk.Frame):
 
         # 権限ドロップダウン
         self.new_entry_authority = ttk.Combobox(
-            self.nwe_register_frame,
+            self.user_form_frame,
             font=("Meiryo UI",10),
             width=20,
             values=["管理者", "一般"],
@@ -253,7 +243,7 @@ class UserRegisterFrame(tk.Frame):
         # =========================
         # パスワードラベル 注意書き
         label_new_pass_placeholder = tk.Label(
-            self.nwe_register_frame,
+            self.user_form_frame,
             text="※ (必須)10文字以上で大小英文字、数字、記号(-又は＠)を組み合わせてください",
             font=("Meiryo UI", 8),
             fg="red",
@@ -269,7 +259,7 @@ class UserRegisterFrame(tk.Frame):
 
         # パスワードラベル
         label_new_password = tk.Label(
-            self.nwe_register_frame,
+            self.user_form_frame,
             text="パスワード      　:",
             font=("Meiryo UI",10),
         )
@@ -288,7 +278,7 @@ class UserRegisterFrame(tk.Frame):
             "%P"
         )
         self.new_entry_password = ttk.Entry(
-            self.nwe_register_frame,
+            self.user_form_frame,
             font=("Meiryo UI",12),
             width=20,
             validate="key",
@@ -306,7 +296,7 @@ class UserRegisterFrame(tk.Frame):
 
         # パスワードラベル(確認用)
         label_new_password_confirm = tk.Label(
-            self.nwe_register_frame,
+            self.user_form_frame,
             text="パスワード (確認) :",
             font=("Meiryo UI",9),
         )
@@ -325,7 +315,7 @@ class UserRegisterFrame(tk.Frame):
             "%P"
         )
         self.new_entry_password_confirm = ttk.Entry(
-            self.nwe_register_frame,
+            self.user_form_frame,
             font=("Meiryo UI",12),
             width=20,
             validate="key",
@@ -346,7 +336,7 @@ class UserRegisterFrame(tk.Frame):
 
         # パスワード表示チェックボックス
         self.check_show_password = tk.Checkbutton(
-            self.nwe_register_frame,
+            self.user_form_frame,
             text="パスワード表示",
             variable=self.show_password_var,
             command=self.toggle_password
@@ -374,7 +364,7 @@ class UserRegisterFrame(tk.Frame):
         self.button_new_back = ttk.Button(
             register_under_frame,
             text="戻る" ,
-            command=lambda: self.master.show_frame("UserManagementFrame")
+            command=lambda: self.frame_manager.show_frame("UserManagementFrame")
         )
 
         self.button_new_back.grid(
@@ -714,7 +704,7 @@ class UserRegisterFrame(tk.Frame):
 
             self.edit_mode = False
 
-            self.nwe_register_frame.config(
+            self.user_form_frame.config(
                 text="ユーザー新規登録"        
             )
             self.button_new_cancel.config(
@@ -741,7 +731,7 @@ class UserRegisterFrame(tk.Frame):
             state="disabled"
         )
 
-        self.nwe_register_frame.config(
+        self.user_form_frame.config(
             text="ユーザー編集"
         )
 
@@ -789,3 +779,17 @@ class UserRegisterFrame(tk.Frame):
         self.new_entry_password.delete(0, tk.END)
         self.new_entry_password_confirm.delete(0, tk.END)
         self.new_entry_id.focus_set()
+
+    def set_mode(self, mode):
+
+        if mode == "New":
+
+            self.user_form_frame.config(
+                text="ユーザー新規登録"
+            )
+
+        elif mode == "Edit":
+
+            self.user_form_frame.config(
+                text="ユーザー編集"
+            )

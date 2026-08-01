@@ -1,16 +1,17 @@
 import tkinter as tk
 from tkinter import ttk
 
-
 class SideMenuFrame(tk.Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, frame_manager):
 
         super().__init__(
             parent,
             width=180,
             bg="#7F7C7C"
         )
+
+        self.frame_manager = frame_manager
 
         self.pack_propagate(False)
 
@@ -30,12 +31,11 @@ class SideMenuFrame(tk.Frame):
                 self,
                 text=text,
                 command=lambda n=frame_name:
-                    parent.master.show_frame(n)
+                    self.frame_manager.show_frame(n)
             )
 
             btn.pack(
-                fill="x",#横幅を埋める
+                fill="x",
                 padx=5,
                 pady=2
             )
-
