@@ -1,26 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
 
-from src.gui.frames.sidemenu_frame import SideMenuFrame
+from src.gui.base_frame import BaseFrame
 
-class HomeFrame(tk.Frame):
+class HomeFrame(BaseFrame):
 
-    def __init__(self, parent):
+    def __init__(self, parent,frame_manager):
 
-        super().__init__(
-            parent,
-            bg="white"
-        )
+        super().__init__(parent,frame_manager,bg="white")
 
-        #=========================
-        # サイドメニュー(左側)
-        #=========================
-        self.sidemenu_frame = SideMenuFrame(self)
-
-        self.sidemenu_frame.pack(
-            side="left",
-            fill="y"
-        )
 
         #=========================
         # コンテンツ(右側)

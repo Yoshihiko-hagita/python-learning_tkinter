@@ -1,18 +1,4 @@
-import pyodbc
-
-# =========================
-# DB接続
-# =========================
-def get_connection():
-
-    conn = pyodbc.connect(
-        "DRIVER={ODBC Driver 17 for SQL Server};"
-        "SERVER=HP-PC;"
-        "DATABASE=EquipmentDB;"
-        "Trusted_Connection=yes;"
-    )
-
-    return conn
+from src.db.connection import get_connection
 
 # =========================
 # ユーザー登録
@@ -76,48 +62,48 @@ def update_user(
 
     if password_hash:
 
-      sql = """
-      UPDATE tbl_users
-      SET
-          user_name = ?,
-          authority = ?,
-          mail_address = ?,
-          password_hash = ?,
-          updated_at = SYSDATETIME()
-      WHERE employee_id = ?
-      """
-      cursor.execute(
-          sql,
-          (
-              user_name,
-              authority,
-              mail_address,
-              password_hash,
-              employee_id
-          )
-      )
+        sql = """
+        UPDATE tbl_users
+        SET
+            user_name = ?,
+            authority = ?,
+            mail_address = ?,
+            password_hash = ?,
+            updated_at = SYSDATETIME()
+        WHERE employee_id = ?
+        """
+        cursor.execute(
+            sql,
+            (
+                user_name,
+                authority,
+                mail_address,
+                password_hash,
+                employee_id
+            )
+    )
 
     else:
 
-      sql = """
-      UPDATE tbl_users
-      SET
-          user_name = ?,
-          authority = ?,
-          mail_address = ?,
-          updated_at = SYSDATETIME()
-      WHERE employee_id = ?
-      """
+        sql = """
+        UPDATE tbl_users
+        SET
+            user_name = ?,
+            authority = ?,
+            mail_address = ?,
+            updated_at = SYSDATETIME()
+        WHERE employee_id = ?
+        """
 
-      cursor.execute(
-          sql,
-          (
-              user_name,
-              authority,
-              mail_address,
-              employee_id
-          )
-      )
+        cursor.execute(
+            sql,
+            (
+                user_name,
+                authority,
+                mail_address,
+                employee_id
+            )
+    )
 
     conn.commit()
 
