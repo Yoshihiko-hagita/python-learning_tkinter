@@ -11,7 +11,7 @@ class HomeFrame(BaseFrame):
 
 
         #=========================
-        # コンテンツ(右側)
+        # コンテンツ(右側)-[Widget]
         #=========================
         home_contents_frame = tk.Frame(
             self,
@@ -25,7 +25,7 @@ class HomeFrame(BaseFrame):
         )
 
         # =========================
-        # 現在貸出中の備品
+        # 現在貸出中の備品-[Widget]
         # =========================
         rental_frame = ttk.LabelFrame(
             home_contents_frame,
@@ -69,27 +69,8 @@ class HomeFrame(BaseFrame):
             ipady=100
         )
 
-        # ダミーデータ
-        self.tree.insert(
-            "",
-            "end",
-            values=("EQ-A001", "PC", "JPh436R43", "1", "4/12")
-        )
-
-        self.tree.insert(
-            "",
-            "end",
-            values=("EQ-A021", "キーボード", "PJ43Y3434", "1", "4/12")
-        )
-
-        self.tree.insert(
-            "",
-            "end",
-            values=("EQ-D001", "マウス", "PJ111JRE8", "1", "4/12")
-        )
-
         # =========================
-        # お知らせ
+        # お知らせ-[Widget]
         # =========================
         notice_frame = ttk.LabelFrame(
             home_contents_frame,
@@ -112,23 +93,8 @@ class HomeFrame(BaseFrame):
             ipady=30
         )
 
-        notice_list.insert(
-            tk.END,
-            "返却期限が近い備品があります。"
-        )
-
-        notice_list.insert(
-            tk.END,
-            "新しいVerがリリースされました。"
-        )
-
-        notice_list.insert(
-            tk.END,
-            "最新版をダウンロードしてください。"
-        )
-
         # =========================
-        # バージョン表示
+        # バージョン表示-[Widget]
         # =========================
 
         version_label = tk.Label(

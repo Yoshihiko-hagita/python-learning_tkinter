@@ -1,5 +1,4 @@
 
-
 from src.gui.frames.log_in_frame import LogInFrame
 from src.gui.frames.home_frame import HomeFrame
 from src.gui.frames.user_management_frame import UserManagementFrame
@@ -33,14 +32,16 @@ class FrameManager:
     # =========================
     # 画面切替
     # =========================
-
     def show_frame(self, name,**kwargs):
 
         frame = self.frames[name]
 
         frame.tkraise()
-
+        
         mode = kwargs.get("mode")
+        user = kwargs.get("user")
+        
+        frame.mode = mode
 
         # タイトル変更
         if name == "LogInFrame":
@@ -61,13 +62,17 @@ class FrameManager:
             )
 
         elif mode == "New":
-            frame.set_mode(mode)
             self.parent.title(
                 "【備品管理システム】- [ユーザー新規登録画面]"
             )
-
+            frame.user_form_frame.config(
+                text="ユーザー新規登録"
+            )
         elif mode == "Edit":
-            frame.set_mode(mode)
             self.parent.title(
                 "【備品管理システム】- [ユーザー編集画面]"
             )
+            frame.user_form_frame.config(
+                text="ユーザー編集"
+            )
+            frame.set_user_info(user)

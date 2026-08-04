@@ -11,6 +11,9 @@ class SideMenuFrame(tk.Frame):
             bg="#7F7C7C"
         )
 
+        #=========================
+        # サイドメニュー(左側)
+        #=========================
         self.frame_manager = frame_manager
 
         self.pack_propagate(False)

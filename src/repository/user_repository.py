@@ -1,28 +1,28 @@
-from src.db.connection import get_connection
+import bcrypt
+from src.repository.connection_repository import get_connection
+
 
 # =========================
 # ユーザー登録
 # =========================
-def insert_user(
-    employee_id,
-    user_name,
-    password,
-    authority,
-    mail_address
-):
+def insert_user(user):
+
+    password_hash = bcrypt.hashpw(
+        user.password.encode("utf-8"),
+        bcrypt.gensalt()
+    ).decode("utf-8")
 
     conn = get_connection()
-
     cursor = conn.cursor()
 
     sql = """
     INSERT INTO tbl_users
     (
         employee_id,
-        user_name,
-        password_hash,
+        name,
+        mail_address,
         authority,
-        mail_address
+        password_hash
     )
     VALUES
     (
@@ -33,11 +33,11 @@ def insert_user(
     cursor.execute(
         sql,
         (
-            employee_id,
-            user_name,
-            password,
-            authority,
-            mail_address
+            user.employee_id,
+            user.name,
+            user.mail_address,
+            user.authority,
+            password_hash
         )
     )
 
@@ -48,65 +48,61 @@ def insert_user(
 # =========================
 # ユーザー更新
 # =========================
-def update_user(
-    employee_id,
-    user_name,
-    authority,
-    mail_address,
-    password_hash=None
-):
+def update_user(user):
 
     conn = get_connection()
-
     cursor = conn.cursor()
 
-    if password_hash:
+    if user.password:
+
+        password_hash = bcrypt.hashpw(
+            user.password.encode("utf-8"),
+            bcrypt.gensalt()
+        ).decode("utf-8")
 
         sql = """
         UPDATE tbl_users
         SET
-            user_name = ?,
-            authority = ?,
+            name = ?,
             mail_address = ?,
-            password_hash = ?,
-            updated_at = SYSDATETIME()
+            authority = ?,
+            password_hash = ?
         WHERE employee_id = ?
         """
+
         cursor.execute(
             sql,
             (
-                user_name,
-                authority,
-                mail_address,
+                user.name,
+                user.mail_address,
+                user.authority,
                 password_hash,
-                employee_id
+                user.employee_id
             )
-    )
+        )
 
     else:
 
         sql = """
         UPDATE tbl_users
         SET
-            user_name = ?,
-            authority = ?,
+            name = ?,
             mail_address = ?,
-            updated_at = SYSDATETIME()
+            authority = ?
         WHERE employee_id = ?
         """
 
         cursor.execute(
             sql,
             (
-                user_name,
-                authority,
-                mail_address,
-                employee_id
+                user.name,
+                user.mail_address,
+                user.authority,
+                user.employee_id
             )
-    )
+        )
 
     conn.commit()
-
     conn.close()
 
 # =========================
@@ -121,8 +117,9 @@ def get_user(employee_id):
     sql = """
     SELECT
         employee_id,
-        user_name,
+        name,
         password_hash,
+        mail_address,
         authority
     FROM tbl_users
     WHERE employee_id = ?

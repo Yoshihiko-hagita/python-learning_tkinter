@@ -1,21 +1,25 @@
 import tkinter as tk
-import bcrypt
 
 from tkinter import ttk
 from tkinter import messagebox
-from src.repository.sql import insert_user, get_user, update_user
-from src.service.user_service import get_user_info
+from src.models.user import User
+from src.repository import user_repository
 from src.gui.base_frame import BaseFrame
-
+from src.gui.common_validators import ui_validator
 
 class UserFormFrame(BaseFrame):
-
+        
+    AUTHORITY_MAP = {
+            "管理者": "ADMIN",
+            "一般": "USER",
+        }
+    
     def __init__(self, parent,frame_manager):
 
         super().__init__(parent,frame_manager,bg="white")
 
         #=========================
-        # コンテンツ(右側)
+        # コンテンツ(右側)-[Widget]
         #=========================
         user_register_frame = tk.Frame(
             self
@@ -28,13 +32,10 @@ class UserFormFrame(BaseFrame):
         )
 
         # =========================
-        # フレーム
+        # フレーム-[Widget]
         # =========================
-        
-
         self.user_form_frame = ttk.LabelFrame(
-            user_register_frame,
-            text="ユーザー新規登録",
+            user_register_frame
         )
 
         self.user_form_frame.pack(
@@ -43,30 +44,30 @@ class UserFormFrame(BaseFrame):
         )
 
         # =========================
-        # 社員ID
+        # 社員ID-[Widget]
         # =========================
         # 社員ID 注意書き
-        label_new_placeholder = tk.Label(
+        label_id_important_notes = tk.Label(
             self.user_form_frame,
             text="※ (必須)半角英数字とハイフン(-)のみ入力可能です",
             font=("Meiryo UI", 8),
             fg="red"
         )
 
-        label_new_placeholder.grid(
+        label_id_important_notes.grid(
             row=0,
             column=1,
             sticky="w",
             padx=(20, 0)
         )
         # 社員IDラベル
-        label_new_id = tk.Label(
+        label_id = tk.Label(
             self.user_form_frame,
             text="社員ID         :",
             font=("Meiryo UI", 10)
         )
 
-        label_new_id.grid(
+        label_id.grid(
             row=1,
             column=0,
             sticky="w",
@@ -74,12 +75,9 @@ class UserFormFrame(BaseFrame):
         )
 
         # 社員ID入力
-        vcmd_id = (
-            self.register(self.validate_employee_no),
-            "%P"
-        )
+        vcmd_id = (self.register(ui_validator.validate_employee_id_chars),"%P")
 
-        self.new_entry_id = ttk.Entry(
+        self.entry_id = ttk.Entry(
             self.user_form_frame,
             font=("Meiryo UI",12),
             width=20,
@@ -87,27 +85,27 @@ class UserFormFrame(BaseFrame):
             validatecommand=vcmd_id
         )
 
-        self.new_entry_id.grid(
+        self.entry_id.grid(
             row=1,
             column=1,
             sticky="w",
             padx=(20, 0)
         )
 
-        self.new_entry_id.focus_set()
+        self.entry_id.focus_set()
 
         # =========================
-        # 氏名
+        # 氏名-[Widget]
         # =========================
         # 氏名 注意書き
-        label_newname_placeholder = tk.Label(
+        label_name_important_notes = tk.Label(
             self.user_form_frame,
             text="※ (必須)",
             font=("Meiryo UI", 8),
             fg="red"
         )
 
-        label_newname_placeholder.grid(
+        label_name_important_notes.grid(
             row=2,
             column=1,
             sticky="w",
@@ -115,13 +113,13 @@ class UserFormFrame(BaseFrame):
             pady=(10, 0)
         )
         # 氏名ラベル
-        label_newname = tk.Label(
+        label_name = tk.Label(
             self.user_form_frame,
             text="氏 名        　　:",
             font=("Meiryo UI", 10)
         )
 
-        label_newname.grid(
+        label_name.grid(
             row=3,
             column=0,
             sticky="w",
@@ -129,30 +127,30 @@ class UserFormFrame(BaseFrame):
         )
 
         # 氏名入力
-        self.new_entry_name = ttk.Entry(
+        self.entry_name = ttk.Entry(
             self.user_form_frame,
             font=("Meiryo UI",12),
             width=20,
         )
 
-        self.new_entry_name.grid(
+        self.entry_name.grid(
             row=3,
             column=1,
             sticky="w",
             padx=(20, 0)
         )
         # =========================
-        # メールアドレス
+        # メールアドレス-[Widget]
         # =========================
         # メール 注意書き
-        label_newmail_placeholder = tk.Label(
+        label_mail_important_notes = tk.Label(
             self.user_form_frame,
             text="※ (任意)",
             font=("Meiryo UI", 8),
             fg="gray"
         )
 
-        label_newmail_placeholder.grid(
+        label_mail_important_notes.grid(
             row=4,
             column=1,
             sticky="w",
@@ -160,13 +158,13 @@ class UserFormFrame(BaseFrame):
             pady=(10, 0)
         )
         # メールラベル
-        label_newmail = tk.Label(
+        label_mail = tk.Label(
             self.user_form_frame,
             text="メールアドレス   :",
             font=("Meiryo UI", 10)
         )
 
-        label_newmail.grid(
+        label_mail.grid(
             row=5,
             column=0,
             sticky="w",
@@ -174,13 +172,13 @@ class UserFormFrame(BaseFrame):
         )
 
         # メール入力
-        self.new_entry_mail = ttk.Entry(
+        self.entry_maill = ttk.Entry(
             self.user_form_frame,
             font=("Meiryo UI",12),
             width=20,
         )
 
-        self.new_entry_mail.grid(
+        self.entry_maill.grid(
             row=5,
             column=1,
             sticky="w",
@@ -188,17 +186,17 @@ class UserFormFrame(BaseFrame):
         )
 
         # =========================
-        # 権限
+        # 権限選択-[Widget]
         # =========================
         # 権限 注意書き
-        label_newauthority_placeholder = tk.Label(
+        label_authority_important_notes = tk.Label(
             self.user_form_frame,
             text="※ (必須)",
             font=("Meiryo UI", 8),
             fg="red"
         )
 
-        label_newauthority_placeholder.grid(
+        label_authority_important_notes.grid(
             row=6,
             column=1,
             sticky="w",
@@ -206,13 +204,13 @@ class UserFormFrame(BaseFrame):
             pady=(10, 0)
         )
         # 権限ラベル
-        label_newauthority = tk.Label(
+        label_authority = tk.Label(
             self.user_form_frame,
             text="権 限          　:",
             font=("Meiryo UI", 10)
         )
 
-        label_newauthority.grid(
+        label_authority.grid(
             row=7,
             column=0,
             sticky="w",
@@ -220,7 +218,7 @@ class UserFormFrame(BaseFrame):
         )
 
         # 権限ドロップダウン
-        self.new_entry_authority = ttk.Combobox(
+        self.entry_authority = ttk.Combobox(
             self.user_form_frame,
             font=("Meiryo UI",10),
             width=20,
@@ -228,7 +226,7 @@ class UserFormFrame(BaseFrame):
             state="readonly"
         )
 
-        self.new_entry_authority.grid(
+        self.entry_authority.grid(
             row=7,
             column=1,
             sticky="w",
@@ -236,20 +234,20 @@ class UserFormFrame(BaseFrame):
         )
 
         # 権限初期値
-        self.new_entry_authority.current(1)
+        self.entry_authority.current(1)
 
         # =========================
-        # パスワード
+        # パスワード-[Widget]
         # =========================
         # パスワードラベル 注意書き
-        label_new_pass_placeholder = tk.Label(
+        label_password_important_notes = tk.Label(
             self.user_form_frame,
             text="※ (必須)10文字以上で大小英文字、数字、記号(-又は＠)を組み合わせてください",
             font=("Meiryo UI", 8),
             fg="red",
         )
 
-        label_new_pass_placeholder.grid(
+        label_password_important_notes.grid(
             row=10,
             column=1,
             sticky="w",
@@ -258,13 +256,13 @@ class UserFormFrame(BaseFrame):
         )
 
         # パスワードラベル
-        label_new_password = tk.Label(
+        label_password = tk.Label(
             self.user_form_frame,
             text="パスワード      　:",
             font=("Meiryo UI",10),
         )
 
-        label_new_password.grid(
+        label_password.grid(
             row=11,
             column=0,
             sticky="w",
@@ -273,11 +271,8 @@ class UserFormFrame(BaseFrame):
         )
 
         # パスワード入力
-        vcmd_password = (
-            self.register(self.validate_password_no),
-            "%P"
-        )
-        self.new_entry_password = ttk.Entry(
+        vcmd_password = (self.register(ui_validator.validate_password_chars),"%P")
+        self.entry_password = ttk.Entry(
             self.user_form_frame,
             font=("Meiryo UI",12),
             width=20,
@@ -286,7 +281,7 @@ class UserFormFrame(BaseFrame):
             show="*"
         )
 
-        self.new_entry_password.grid(
+        self.entry_password.grid(
             row=11,
             column=1,
             sticky="w",
@@ -295,13 +290,13 @@ class UserFormFrame(BaseFrame):
         )
 
         # パスワードラベル(確認用)
-        label_new_password_confirm = tk.Label(
+        label_password_confirm = tk.Label(
             self.user_form_frame,
             text="パスワード (確認) :",
             font=("Meiryo UI",9),
         )
 
-        label_new_password_confirm.grid(
+        label_password_confirm.grid(
             row=12,
             column=0,
             sticky="w",
@@ -310,11 +305,8 @@ class UserFormFrame(BaseFrame):
         )
 
         # パスワード入力(確認用)
-        vcmd_password = (
-            self.register(self.validate_password_no),
-            "%P"
-        )
-        self.new_entry_password_confirm = ttk.Entry(
+        vcmd_password = (self.register(ui_validator.validate_password_chars),"%P")
+        self.entry_password_confirm = ttk.Entry(
             self.user_form_frame,
             font=("Meiryo UI",12),
             width=20,
@@ -323,7 +315,7 @@ class UserFormFrame(BaseFrame):
             show="*"
         )
 
-        self.new_entry_password_confirm.grid(
+        self.entry_password_confirm.grid(
             row=12,
             column=1,
             sticky="w",
@@ -350,24 +342,20 @@ class UserFormFrame(BaseFrame):
         )
 
         # =========================
-        # underframe
+        # underframe-[Widget]
         # =========================
-        register_under_frame = ttk.Frame(
-            user_register_frame
-        )
+        register_under_frame = ttk.Frame(user_register_frame)
 
-        register_under_frame.pack(
-            fill="both"
-        )
+        register_under_frame.pack(fill="both")
 
         #戻るボタン
-        self.button_new_back = ttk.Button(
+        self.button_back = ttk.Button(
             register_under_frame,
             text="戻る" ,
             command=lambda: self.frame_manager.show_frame("UserManagementFrame")
         )
 
-        self.button_new_back.grid(
+        self.button_back.grid(
             column=0,
             row=0,
             padx=(110,50),
@@ -375,13 +363,13 @@ class UserFormFrame(BaseFrame):
         )
 
         #保存ボタン
-        self.button_new_save = ttk.Button(
+        self.button_save = ttk.Button(
             register_under_frame,
             text="保存",
             command=self.save_user
         )
 
-        self.button_new_save.grid(
+        self.button_save.grid(
             column=1,
             row=0,
             padx=(0,50),
@@ -389,407 +377,84 @@ class UserFormFrame(BaseFrame):
         )
 
         #キャンセルボタン
-        self.button_new_cancel = ttk.Button(
+        self.button_cancel = ttk.Button(
             register_under_frame,
             text="キャンセル",
             command=self.clear_form
         )
 
-        self.button_new_cancel.grid(
+        self.button_cancel.grid(
             column=2,
             row=0,
             padx=(0,50),
             pady=(30,15)
         )
 
-    # =========================
-    # パスワード表示切替
-    # =========================
+    #----------------------------
+    # パスワード表示切替-[Method]
+    #----------------------------
     def toggle_password(self):
+        show = "" if self.show_password_var.get() else "*"
+        self.entry_password.config(show=show)
+        self.entry_password_confirm.config(show=show)
 
-        if self.show_password_var.get():
-
-            self.new_entry_password.config(
-                show=""
-            )
-
-            self.new_entry_password_confirm.config(
-                show=""
-            )
-
-        else:
-
-            self.new_entry_password.config(
-                show="*"
-            )
-
-            self.new_entry_password_confirm.config(
-                show="*"
-            )
-
-
-    #==================================================
-    # 社員IDチェック
-    #==================================================
-    def validate_employee_no(self, new_value):
-
-        if new_value == "":
-            return True
-
-        if len(new_value) > 8:
-            return False
-
-        for c in new_value:
-
-            if not (
-                c.isascii() and
-                (c.isalnum() or c == "-")
-            ):
-                return False
-
-        return True
-    
-    #==================================================
-    # パスワードチェック
-    #==================================================
-    def validate_password_no(self, new_value):
-
-        if new_value == "":
-            return True
-
-        for c in new_value:
-
-            if not (
-                c.isascii() and
-                (c.isalnum() or c == "-" or c == "@")
-            ):
-                return False
-
-        return True
-
-    # =========================
-    # button処理
-    # =========================
+    #----------------------------
+    # キャンセルボタン-[Method]
+    #----------------------------
     def  clear_form(self):
-        self.new_entry_id.delete(0, tk.END)
-        self.new_entry_name.delete(0, tk.END)
-        self.new_entry_mail.delete(0, tk.END)
-        self.new_entry_authority.current(1)
-        self.new_entry_password.delete(0, tk.END)
-        self.new_entry_password_confirm.delete(0, tk.END)
-        self.new_entry_id.focus_set()
+        self.entry_id.delete(0, tk.END)
+        self.entry_name.delete(0, tk.END)
+        self.entry_maill.delete(0, tk.END)
+        self.entry_authority.current(1)
+        self.entry_password.delete(0, tk.END)
+        self.entry_password_confirm.delete(0, tk.END)
+        self.entry_id.focus_set()
     
-    # =========================
-    # ユーザー登録
-    # =========================
+    #----------------------------
+    # ユーザー登録-[Method]
+    #----------------------------
     def save_user(self):
-        employee_id = self.new_entry_id.get()
-        user_name = self.new_entry_name.get()
-        mail_address = self.new_entry_mail.get()
-        authority = self.new_entry_authority.get()
-        password = self.new_entry_password.get()
-        password_confirm = self.new_entry_password_confirm.get()
 
-        if self.edit_mode:
+        user = User(
+            employee_id=self.entry_id.get(),
+            name=self.entry_name.get(),
+            mail_address=self.entry_maill.get(),
+            authority=self.AUTHORITY_MAP.get(self.entry_authority.get()),
+            password=self.entry_password.get(),
+            password_confirm=self.entry_password_confirm.get()
+        )
 
-            if not user_name:
+        response,mesage =ui_validator.input_validation(user,self.mode)
 
-                messagebox.showerror(
-                    "入力エラー",
-                    "氏名を入力してください。"
-                )
-
-                self.new_entry_name.focus_set()
-
-                return
-            
-            # メールアドレス形式チェック
-            if mail_address:
-
-                if "@" not in mail_address:
-
-                    messagebox.showerror(
-                        "入力エラー",
-                        "メールアドレスの形式が正しくありません。"
-                    )
-
-                    self.new_entry_mail.focus_set()
-
-                    return
-                
-            # パスワード変更時
-            if password:
-
-                if password != password_confirm:
-
-                    messagebox.showerror(
-                        "入力エラー",
-                        "パスワードが一致しません。"
-                    )
-
-                    self.new_entry_password.focus_set()
-
-                    return
-                
-                else:
-
-                    password_hash = bcrypt.hashpw(
-                        password.encode("utf-8"),
-                        bcrypt.gensalt()
-                    ).decode("utf-8")
-
-                
-            if authority == "管理者":
-                authority = "ADMIN"
-            else:
-                authority = "USER"
-
-            if password:
-
-                update_user(
-                    employee_id,
-                    user_name,
-                    authority,
-                    mail_address if mail_address else None,
-                    password_hash
-                )
-
-            else:
-
-                update_user(
-                    employee_id,
-                    user_name,
-                    authority,
-                    mail_address if mail_address else None
-                )
-
-
-            messagebox.showinfo(
-                "完了",
-                "更新しました。"
-            )
-
+        if not response:
+            messagebox.showerror("入力エラー",mesage)
             return
         
-        else:
-        # ↓↓↓ここから下は今の新規登録処理↓↓↓
-            if password != password_confirm:
-                messagebox.showerror(
-                    "入力エラー",
-                    "パスワードが一致しません。"
-                )
+        try:
+            if self.mode == "New":
+                user_repository.insert_user(user)
 
-                self.new_entry_password.focus_set()
-                return
-
-            password_hash = bcrypt.hashpw(
-                password.encode("utf-8"),
-                bcrypt.gensalt()
-            ).decode("utf-8")
-
-            # 社員ID
-            if not employee_id:
-                messagebox.showerror(
-                    "入力エラー",
-                    "社員IDを入力してください。"
-                )
-
-                self.new_entry_id.focus_set()
-                return
-            
-            if len(employee_id) != 8:
-
-                messagebox.showerror(
-                    "入力エラー",
-                    "社員IDは8文字で入力してください。"
-                )
-                return
-
-            # 社員ID重複チェック
-            user = get_user(employee_id)
-
-            if user is not None:
-
-                messagebox.showerror(
-                    "入力エラー",
-                    "その社員IDは既に登録されています。"
-                )
-
-                self.new_entry_id.focus_set()
-
-                return
-
-            # 氏名
-            if not user_name:
-                messagebox.showerror(
-                    "入力エラー",
-                    "氏名を入力してください。"
-                )
-
-                self.new_entry_name.focus_set()
-                return
-
-
-            # パスワード
-            if not password:
-                messagebox.showerror(
-                    "入力エラー",
-                    "パスワードを入力してください。"
-                )
-
-                self.new_entry_password.focus_set()
-                return
-            
-            if len(password) < 10:
-
-                messagebox.showerror(
-                    "入力エラー",
-                    "パスワードは10文字以上で入力してください。"
-                )
-
-                self.new_entry_password.focus_set()
-
-                return
-            
-            if not (
-                    any(c.isupper() for c in password)
-                    and any(c.islower() for c in password)
-                    and any(c.isdigit() for c in password)
-                    and ("-" in password or "@" in password)
-                ):
-
-                messagebox.showerror(
-                    "入力エラー",
-                    "パスワードは半角英大文字、半角英小文字、半角数字、記号(-、@)をそれぞれ1文字以上含めてください。"
-                )
-
-                self.new_entry_password.focus_set()
-
-                return
-
-            if authority == "管理者":
-                authority = "ADMIN"
             else:
-                authority = "USER"
+                user_repository.update_user(user)
+            self.clear_form()
 
-            try:
-
-                insert_user(
-                    employee_id,
-                    user_name,
-                    password_hash,
-                    authority,
-                    mail_address if mail_address else None
-                )
-
-                messagebox.showinfo(
-                    "完了",
-                    "登録しました。"
-                )
-
-            except Exception as e:
-
-                messagebox.showerror(
-                    "エラー",
-                    str(e)
-            )
-            
-    # =========================
-    # show処理
-    # =========================
-    def on_show(self, employee_id=None):
-        
-        # 新規モード
-        if employee_id is None:
-
-            self.edit_mode = False
-
-            self.user_form_frame.config(
-                text="ユーザー新規登録"        
-            )
-            self.button_new_cancel.config(
-                state="normal"
-            )
-            self.new_entry_id.config(
-                state="normal"
-            )
-
-            self.new_entry_id.delete(0, tk.END)
-            self.new_entry_name.delete(0, tk.END)
-            self.new_entry_mail.delete(0, tk.END)
-            self.new_entry_authority.current(1)
-            self.new_entry_password.delete(0, tk.END)
-            self.new_entry_password_confirm.delete(0, tk.END)
-            self.new_entry_id.focus_set()
-
+        except Exception as e:
+            messagebox.showerror("エラー",str(e))
             return
-        
-        # 編集モード
-        self.edit_mode = True
 
-        self.button_new_cancel.config(
-            state="disabled"
+    def set_user_info(self,user):
+
+        self.user = user
+        self.entry_id.delete(0, tk.END)
+        self.entry_name.delete(0, tk.END)
+        self.entry_maill.delete(0, tk.END)
+
+        self.entry_id.insert(0, user["employee_id"])
+        self.entry_name.insert(0, user["name"])
+
+        if user["mail_address"]:
+            self.entry_maill.insert(0, user["mail_address"])
+
+        self.entry_authority.set(
+            self.AUTHORITY_MAP.get(user["authority"], "")
         )
-
-        self.user_form_frame.config(
-            text="ユーザー編集"
-        )
-
-        user = get_user_info(employee_id)
-
-        self.new_entry_id.delete(
-            0,
-            tk.END
-        )
-
-        self.new_entry_id.insert(
-            0,
-            user.employee_id
-        )
-        self.new_entry_name.delete(
-            0,
-            tk.END
-        )
-
-        self.new_entry_name.insert(
-            0,
-            user.user_name
-        )
-
-        self.new_entry_mail.delete(
-            0,
-            tk.END
-        )
-
-        if user.mail_address:
-            self.new_entry_mail.insert(
-                0,
-                user.mail_address
-            )
-
-        if user.authority == "ADMIN":
-            self.new_entry_authority.set("管理者")
-        else:
-            self.new_entry_authority.set("一般")
-
-        self.new_entry_id.config(
-            state="readonly"
-        )
-
-        self.new_entry_password.delete(0, tk.END)
-        self.new_entry_password_confirm.delete(0, tk.END)
-        self.new_entry_id.focus_set()
-
-    def set_mode(self, mode):
-
-        if mode == "New":
-
-            self.user_form_frame.config(
-                text="ユーザー新規登録"
-            )
-
-        elif mode == "Edit":
-
-            self.user_form_frame.config(
-                text="ユーザー編集"
-            )

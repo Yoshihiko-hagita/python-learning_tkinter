@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-
-from src.service.user_service import get_user_list
+from src.service import user_service
 from src.gui.base_frame import BaseFrame
 
 class UserManagementFrame(BaseFrame):
@@ -14,9 +13,7 @@ class UserManagementFrame(BaseFrame):
         #=========================
         # コンテンツ(右側)
         #=========================
-        user_contents_frame = tk.Frame(
-            self
-        )
+        user_contents_frame = tk.Frame(self)
 
         user_contents_frame.pack(
             side="right",
@@ -32,9 +29,7 @@ class UserManagementFrame(BaseFrame):
             text="ユーザー検索",
         )
 
-        search_frame.pack(
-            fill="both"
-        )
+        search_frame.pack(fill="both")
 
         # ラベル
         label_id=tk.Label(
@@ -76,9 +71,7 @@ class UserManagementFrame(BaseFrame):
         # =========================
         # Treeview
         # =========================
-        Treeview_frame = ttk.Frame(
-            user_contents_frame
-        )
+        Treeview_frame = ttk.Frame(user_contents_frame)
 
         Treeview_frame.pack(
             fill="both",
@@ -111,13 +104,8 @@ class UserManagementFrame(BaseFrame):
         # =========================
         # underframe
         # =========================
-        serch_under_frame = ttk.Frame(
-            user_contents_frame
-        )
-
-        serch_under_frame.pack(
-            fill="both"
-        )
+        serch_under_frame = ttk.Frame(user_contents_frame)
+        serch_under_frame.pack(fill="both")
 
         #新規登録ボタン
         self.button_new = ttk.Button(
@@ -164,8 +152,7 @@ class UserManagementFrame(BaseFrame):
     def search_user(self):
 
         employee_id = self.entry_id.get()
-
-        users = get_user_list(employee_id)
+        users = user_service.get_user_list(employee_id)
 
         # Treeview初期化
         for item in self.tree.get_children():
@@ -195,16 +182,22 @@ class UserManagementFrame(BaseFrame):
             return
 
         item = self.tree.item(selected[0])
-
+        
         employee_id = item["values"][0]
 
-        
+        user = user_service.get_user_list(employee_id)[0]
 
         self.frame_manager.show_frame(
             "UserFormFrame",
             mode = "Edit",
-            employee_id=employee_id
+            user = user
         )
+
+        
+
+
+
+
 
 
 

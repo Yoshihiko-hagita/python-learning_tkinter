@@ -4,6 +4,7 @@ from tkinter import ttk
 from tkinter import messagebox
 
 from src.service import login_service
+from src.gui.common_validators import ui_validator
 
 class LogInFrame(tk.Frame):
 
@@ -12,13 +13,13 @@ class LogInFrame(tk.Frame):
         self.frame_manager = frame_manager
 
         #=========================
-        # 入力エリア
+        # 入力エリア-[Widget]
         #=========================
         input_frame = tk.Frame(self,pady=10)
         input_frame.place(relx=0.25,rely=0.30)
 
         #=========================
-        # 入力ラベル
+        # 入力ラベル-[Widget]
         #=========================
         label_placeholder = tk.Label(
             input_frame,
@@ -47,9 +48,9 @@ class LogInFrame(tk.Frame):
         )
 
         #=========================
-        # 社員ID入力
+        # 社員ID入力-[Widget]
         #=========================
-        vcmd_id = (self.register(login_service.validate_employee_id),"%P")
+        vcmd_id = (self.register(ui_validator.validate_employee_id_chars),"%P")
 
         self.id_var = tk.StringVar(value="ABC-1234")
 
@@ -73,7 +74,7 @@ class LogInFrame(tk.Frame):
         self.entry_id.bind("<KeyRelease>", self.check_input)
 
         #=========================
-        # パスワードラベル
+        # パスワードラベル-[Widget]
         #=========================
         label_pass_placeholder = tk.Label(
             input_frame,
@@ -100,9 +101,9 @@ class LogInFrame(tk.Frame):
         label_password.grid(row=3,column=0)
 
         #=========================
-        # パスワード入力
+        # パスワード入力-[Widget]
         #=========================
-        vcmd_password = (self.register(login_service.validate_password),"%P")
+        vcmd_password = (self.register(ui_validator.validate_password_chars),"%P")
 
         self.password_var = tk.StringVar(value="Awertyuiop@123")
         self.entry_password = ttk.Entry(
@@ -125,7 +126,7 @@ class LogInFrame(tk.Frame):
         self.entry_password.bind("<Return>",self.enter_login)
 
         #=========================
-        # ログインボタン
+        # ログインボタン-[Widget]
         #=========================
         self.button_login = ttk.Button(
             input_frame,
@@ -144,10 +145,10 @@ class LogInFrame(tk.Frame):
         self.check_input()
         self.button_login .bind("<Return>",self.enter_login)
 
-    #==================================================
-    # 入力チェック(処理)
-    #==================================================
-    def check_input(self, event=None):# event=Noneはbind()で呼び出すときに必要 
+    #-------------------------------------------------
+    # 入力チェック-[Event]
+    #-------------------------------------------------
+    def check_input(self, event=None):
 
         if (
             len(self.entry_id.get()) == 8
@@ -157,23 +158,23 @@ class LogInFrame(tk.Frame):
         else:
             self.button_login.state(["disabled"])
 
-    #==================================================
-    # Enterキーでログイン(処理)
-    #==================================================
+    #-------------------------------------------------
+    # Enterキーでログイン-[Method]
+    #-------------------------------------------------
     def enter_login(self, event=None):
 
         if "disabled" not in self.button_login.state():
             self.login()
             
-    # =================================================
-    # ログイン処理(処理)
-    #==================================================
+    #-------------------------------------------------
+    # ログイン処理-[Method]
+    #-------------------------------------------------
     def login(self):
 
         employee_id = self.entry_id.get().strip()
         password = self.entry_password.get()
 
-        success, message = login_service.pre_login_check(password)
+        success, message = login_service.validate_password_policy(password)
 
         if not success:
             messagebox.showerror("ログインエラー",message)

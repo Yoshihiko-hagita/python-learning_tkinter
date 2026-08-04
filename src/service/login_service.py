@@ -1,51 +1,11 @@
 import bcrypt
 
-from src.repository.sql import get_user
+from src.repository.user_repository import get_user
 
-#==================================================
-# 社員ID入力時のルール
-#==================================================
-def validate_employee_id(new_value):
-
-    if new_value == "":
-        return True
-
-    if len(new_value) > 8:
-        return False
-
-    for c in new_value:
-
-        if not (
-            c.isascii() and
-            (c.isalnum() or c == "-")
-        ):
-            return False
-
-    return True
-
-#==================================================
-# パスワード入力時のルール
-#==================================================
-
-def validate_password(new_value):
-
-    if new_value == "":
-        return True
-
-    for c in new_value:
-
-        if not (
-            c.isascii() and
-            (c.isalnum() or c == "-"or c == "@")
-        ):
-            return False
-
-    return True
-
-#==================================================
-# ログイン前-入力内容の確認
-#==================================================
-def pre_login_check(password):
+#--------------------------------------------------
+# ログイン前-入力内容の確認-[Method]
+#--------------------------------------------------
+def validate_password_policy(password):
     
     if not (
         any(c.isupper() for c in password)
@@ -63,9 +23,9 @@ def pre_login_check(password):
         None
     )
 
-#==================================================
-# ログイン処理
-#==================================================
+#--------------------------------------------------
+# ログイン処理-[Method]
+#--------------------------------------------------
 def login_process(employee_id, password):
 
     user = get_user(employee_id)
