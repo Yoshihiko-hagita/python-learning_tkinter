@@ -1,4 +1,4 @@
-from src.repository.sql import get_connection
+from src.repository.user_repository import get_connection
 
 
 def get_user(employee_id):
@@ -10,7 +10,7 @@ def get_user(employee_id):
     sql = """
     SELECT
         employee_id,
-        user_name,
+        name,
         mail_address,
         authority
     FROM tbl_users
