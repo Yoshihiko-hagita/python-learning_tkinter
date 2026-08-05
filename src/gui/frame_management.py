@@ -1,8 +1,9 @@
 
-from src.gui.frames.log_in_frame import LogInFrame
 from src.gui.frames.home_frame import HomeFrame
-from src.gui.frames.user_management_frame import UserManagementFrame
+from src.gui.frames.log_in_frame import LogInFrame
 from src.gui.frames.user_form_frame import UserFormFrame
+from src.gui.frames.user_management_frame import UserManagementFrame
+
 
 class FrameManager:
     def __init__(self, parent):
@@ -26,8 +27,6 @@ class FrameManager:
                 column=0,
                 sticky="nsew"
             )
-
-            self.show_frame("LogInFrame")
 
     # =========================
     # 画面切替
