@@ -3,6 +3,7 @@ from tkinter import ttk
 
 from src.gui.base_frame import BaseFrame
 
+
 class HomeFrame(BaseFrame):
 
     def __init__(self, parent,frame_manager):
