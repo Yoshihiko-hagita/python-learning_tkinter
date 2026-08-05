@@ -21,7 +21,7 @@ def find_users(employee_id=None):
 
         params = ()
 
-        if employee_id is not None:
+        if employee_id:
             sql += " WHERE employee_id = ?"
             params = (employee_id,)
 

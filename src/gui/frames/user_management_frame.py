@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
 
+from tkinter import messagebox
 from src.service import user_service
 from src.gui.base_frame import BaseFrame
+
 
 class UserManagementFrame(BaseFrame):
 
@@ -137,7 +139,8 @@ class UserManagementFrame(BaseFrame):
         #削除ボタン
         self.button_delete = ttk.Button(
             serch_under_frame,
-            text="削除"
+            text="削除",
+            command=self.delete_user
         )
 
         self.button_delete.grid(
@@ -166,7 +169,7 @@ class UserManagementFrame(BaseFrame):
                 "end",
                 values=(
                     user["employee_id"],
-                    user["user_name"],
+                    user["name"],
                     user["authority"]
                 )
             )
@@ -179,6 +182,7 @@ class UserManagementFrame(BaseFrame):
         selected = self.tree.selection()
 
         if not selected:
+            messagebox.showerror("エラー", "ユーザーを選択してください。")
             return
 
         item = self.tree.item(selected[0])
@@ -193,11 +197,47 @@ class UserManagementFrame(BaseFrame):
             user = user
         )
 
+    # =========================
+    # ユーザー削除
+    # =========================
+    def delete_user(self):
+
+        selected = self.tree.selection()
+
+        if not selected:
+            messagebox.showerror("エラー", "ユーザーを選択してください。")
+            return
+
+        item = self.tree.item(selected[0])
+
+        result = messagebox.askyesno(
+            title="ユーザー削除",
+            message=f"""下記のユーザーを削除します。よろしいですか？
+
+        社員ID : {item["values"][0]}
+        氏名   : {item["values"][1]}
+        権限   : {item["values"][2]}
+        """
+        )
+
+        if not result:
+            return
         
+        employee_id = item["values"][0]
 
+        try:
+            user_service.delete_user_by_employee_id(employee_id)
 
+        except Exception as e:
+            messagebox.showerror(
+                "エラー",
+                f"削除に失敗しました。\n{e}"
+            )
+            return
 
+        self.search_user()
 
+        messagebox.showinfo("完了","ユーザーを削除しました。")
 
 
 

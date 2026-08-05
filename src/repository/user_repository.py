@@ -106,6 +106,35 @@ def update_user(user):
     conn.close()
 
 # =========================
+# ユーザー削除
+# =========================
+def delete_user(employee_id):
+
+    conn = get_connection()
+
+    try:
+        cursor = conn.cursor()
+
+        sql = """
+        DELETE FROM tbl_users
+        WHERE employee_id = ?
+        """
+
+        cursor.execute(
+            sql,
+            (employee_id,)
+        )
+
+        conn.commit()
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        conn.close()
+
+# =========================
 # ユーザー取得
 # =========================
 def get_user(employee_id):
