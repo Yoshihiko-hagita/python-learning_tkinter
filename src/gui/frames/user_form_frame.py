@@ -6,7 +6,6 @@ from src.models.user import User
 from src.repository import user_repository
 from src.gui.base_frame import BaseFrame
 from src.gui.common_validators import ui_validator
-from src.gui.frames import user_management_frame
 
 class UserFormFrame(BaseFrame):
         
