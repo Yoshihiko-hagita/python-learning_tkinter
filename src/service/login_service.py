@@ -1,6 +1,6 @@
 import bcrypt
 
-from src.repository.user_repository import get_user
+from src.repository import user_repository
 
 #--------------------------------------------------
 # ログイン前-入力内容の確認-[Method]
@@ -28,7 +28,7 @@ def validate_password_policy(password):
 #--------------------------------------------------
 def login_process(employee_id, password):
 
-    user = get_user(employee_id)
+    user = user_repository.get_user(employee_id)
 
     # 社員IDが存在しない
     if user is None:

@@ -40,8 +40,9 @@ class FrameManager:
         
         mode = kwargs.get("mode")
         user = kwargs.get("user")
-        
+
         frame.mode = mode
+        
 
         # タイトル変更
         if name == "LogInFrame":
@@ -68,6 +69,8 @@ class FrameManager:
             frame.user_form_frame.config(
                 text="ユーザー新規登録"
             )
+            frame.clear_form()
+            frame.button_cancel.config(state="!disabled")
         elif mode == "Edit":
             self.parent.title(
                 "【備品管理システム】- [ユーザー編集画面]"
@@ -75,4 +78,7 @@ class FrameManager:
             frame.user_form_frame.config(
                 text="ユーザー編集"
             )
+            frame.clear_form()
             frame.set_user_info(user)
+            frame.button_cancel.config(state="disabled")
+            

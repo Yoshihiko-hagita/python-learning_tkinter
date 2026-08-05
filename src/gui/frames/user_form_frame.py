@@ -10,9 +10,13 @@ from src.gui.common_validators import ui_validator
 class UserFormFrame(BaseFrame):
         
     AUTHORITY_MAP = {
-            "管理者": "ADMIN",
-            "一般": "USER",
-        }
+        "管理者": "ADMIN",
+        "一般": "USER",
+    }
+
+    AUTHORITY_REVERSE_MAP = {
+        v: k for k, v in AUTHORITY_MAP.items()
+    }
     
     def __init__(self, parent,frame_manager):
 
@@ -411,7 +415,7 @@ class UserFormFrame(BaseFrame):
         self.entry_id.focus_set()
     
     #----------------------------
-    # ユーザー登録-[Method]
+    # ユーザー登録/更新-[Method]
     #----------------------------
     def save_user(self):
 
@@ -437,6 +441,11 @@ class UserFormFrame(BaseFrame):
             else:
                 user_repository.update_user(user)
             self.clear_form()
+            messagebox.showerror("完了","ユーザー情報を保存しました。")
+
+            self.frame_manager.show_frame("UserManagementFrame")
+            self.user_management_frame.search_user()
+
 
         except Exception as e:
             messagebox.showerror("エラー",str(e))
@@ -456,5 +465,5 @@ class UserFormFrame(BaseFrame):
             self.entry_maill.insert(0, user["mail_address"])
 
         self.entry_authority.set(
-            self.AUTHORITY_MAP.get(user["authority"], "")
+            self.AUTHORITY_REVERSE_MAP.get(user["authority"], "")
         )
