@@ -69,6 +69,28 @@ class EquipmentListFrame(BaseFrame):
 
         style.configure("Treeview.Heading", font=("Arial", 9, "bold"))
 
+        # =========================
+        # underframe
+        # =========================
+        under_frame = ttk.Frame(equipment_list_frame)
+        under_frame.pack(fill="both",expand=True)
+
+        # 備品登録ボタン
+        self.button_new_equipment = ttk.Button(
+            under_frame,
+            text="備品登録",
+        )
+
+        self.button_new_equipment.grid(column=0, row=0, padx=(150, 30), pady=(15, 15))
+
+        # 貸出ボタン
+        self.button_Lending = ttk.Button(
+            under_frame,
+            text="貸出",
+        )
+
+        self.button_Lending.grid(column=1, row=0, padx=(0, 30))
+
     def load_equipment_list(self):
 
         # 既存行削除
@@ -90,12 +112,8 @@ class EquipmentListFrame(BaseFrame):
                 else equipment.item_specification
             )
 
-            model_no = (
-                "-"
-                if equipment.model_no is None
-                else equipment.model_no
-            )
-            
+            model_no = "-" if equipment.model_no is None else equipment.model_no
+
             quantity = f"{equipment.quantity}{equipment.unit_name}"
             available_qty = equipment.quantity - equipment.loaned_qty
             available_qty = (
