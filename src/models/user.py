@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class User:
     employee_id: str

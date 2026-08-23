@@ -6,9 +6,9 @@ from src.gui.base_frame import BaseFrame
 
 class HomeFrame(BaseFrame):
 
-    def __init__(self, parent,frame_manager):
+    def __init__(self, parent,frame_controller):
 
-        super().__init__(parent,frame_manager,bg="white")
+        super().__init__(parent,frame_controller,bg="white")
 
 
         #=========================
@@ -30,7 +30,7 @@ class HomeFrame(BaseFrame):
         # =========================
         rental_frame = ttk.LabelFrame(
             home_contents_frame,
-            text="現在貸出中の備品"
+            text="利用状況"
         )
 
         rental_frame.pack(
@@ -52,8 +52,8 @@ class HomeFrame(BaseFrame):
             height=5
         )
 
-        self.tree.heading("id", text="ID")
-        self.tree.heading("name", text="名称")
+        self.tree.heading("id", text="備品ID")
+        self.tree.heading("name", text="品名")
         self.tree.heading("model", text="品番")
         self.tree.heading("qty", text="数量")
         self.tree.heading("return_date", text="返却日")

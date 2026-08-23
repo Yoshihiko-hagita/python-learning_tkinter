@@ -1,9 +1,7 @@
 .venv/
 __pycache__/
-*.pyc
-.vscode/
-test.py
-.env
-__pycache__/
 *.py[cod]
+.vscode/
+.env
+test.py
 test2.py
