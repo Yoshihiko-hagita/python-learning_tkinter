@@ -1,7 +1,7 @@
 import ctypes
 import tkinter as tk
 
-from src.gui.frame_management import FrameManager
+from src.controller import frame_controller
 
 try:
     ctypes.windll.shcore.SetProcessDpiAwareness(1)
@@ -10,25 +10,23 @@ except OSError:
 
 
 # ==================================
-# Appクラス
+# App-アプリ画面作成
 # ==================================
-
-
 class App(tk.Tk):
     def __init__(self):
 
         super().__init__()
 
         self.init_window()
-        self.frame_manager = FrameManager(self)
-        self.frame_manager.init_frames(self)
-        self.frame_manager.show_frame("LogInFrame")
+        self.frame_controller = frame_controller.FrameController(self)
+        self.frame_controller.init_frames(self)
+        self.frame_controller.show_frame("HomeFrame")
 
     # ==================================
     # ウィンドウ初期化
     # ==================================
     def init_window(self):
-        width = 800
+        width = 1100
         height = 600
 
         # ウィンドウサイズ変更不可
