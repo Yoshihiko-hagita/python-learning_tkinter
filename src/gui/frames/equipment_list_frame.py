@@ -79,6 +79,7 @@ class EquipmentListFrame(BaseFrame):
         self.button_new_equipment = ttk.Button(
             under_frame,
             text="備品登録",
+            command=lambda: self.frame_controller.show_frame("EquipmentRegistrationFrame"),
         )
 
         self.button_new_equipment.grid(column=0, row=0, padx=(150, 30), pady=(15, 15))
