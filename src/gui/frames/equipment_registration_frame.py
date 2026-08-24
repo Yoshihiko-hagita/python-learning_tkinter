@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from src.gui.base_frame import BaseFrame
+from src.gui.common_validators.equipment_validator import EquipmentValidator
 from src.models.equipment import EquipmentRegistration
 
 
@@ -391,6 +392,48 @@ class EquipmentRegistrationFrame(BaseFrame):
     # ----------------------------
     def _on_register(self):
 
+        item_name = self.entry_name.get()
+        error = EquipmentValidator.validate_item_name(item_name)
+
+        if error:
+            print(error)
+            return
+
+        category = self.entry_category.get()
+        error = EquipmentValidator.validate_category(category)
+
+        if error:
+            print(error)
+            return
+
+        quantity = self.entry_quantity.get()
+        error = EquipmentValidator.validate_quantity(quantity)
+
+        if error:
+            print(error)
+            return
+
+        quantity_per_unit = self.entry_quantity_per_unit.get()
+        error = EquipmentValidator.validate_quantity_per_unit(
+            quantity_per_unit,
+            category
+        )
+
+        if error:
+            print(error)
+            return
+
+        content_unit_name = self.entry_content_unit.get()
+        error = EquipmentValidator.validate_content_unit(
+            content_unit_name,
+            category
+        )
+
+        if error:
+            print(error)
+            return
+
+        
         equipment_registration = EquipmentRegistration(
             item_name=self.entry_name.get(),
             item_specification=self.entry_specification.get(),
