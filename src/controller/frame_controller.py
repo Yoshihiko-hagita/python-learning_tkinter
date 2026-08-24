@@ -1,10 +1,11 @@
 from src.config.settings import APP_TITLE
 from src.gui.frames.equipment_list_frame import EquipmentListFrame
+from src.gui.frames.equipment_registration_frame import EquipmentRegistrationFrame
 from src.gui.frames.home_frame import HomeFrame
 from src.gui.frames.log_in_frame import LogInFrame
 from src.gui.frames.user_form_frame import UserFormFrame
 from src.gui.frames.user_management_frame import UserManagementFrame
-from src.gui.frames.equipment_registration_frame import EquipmentRegistrationFrame
+
 
 # =========================
 # 画面コントロール
@@ -59,7 +60,7 @@ class FrameController:
 
         elif name == "EquipmentRegistrationFrame":
             self.parent.title(f"{APP_TITLE} - [備品登録画面]")
-            
+
         elif name == "UserManagementFrame":
             self.parent.title(f"{APP_TITLE} - [ユーザー管理画面]")
             frame.search_user()
