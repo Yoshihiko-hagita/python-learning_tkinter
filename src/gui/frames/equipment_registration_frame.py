@@ -4,6 +4,7 @@ from tkinter import ttk
 from src.gui.base_frame import BaseFrame
 from src.models.equipment import EquipmentRegistration
 
+
 class EquipmentRegistrationFrame(BaseFrame):
     def __init__(self, parent, frame_controller):
 
@@ -399,7 +400,7 @@ class EquipmentRegistrationFrame(BaseFrame):
             unit_id=0,
             quantity_per_unit=int(self.entry_quantity_per_unit.get()),
             content_unit_id=0,
-            remarks=self.entry_remarks.get("1.0", "end-1c")
+            remarks=self.entry_remarks.get("1.0", "end-1c"),
         )
 
         print(equipment_registration)
