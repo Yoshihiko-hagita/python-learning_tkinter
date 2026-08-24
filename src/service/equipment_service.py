@@ -8,3 +8,6 @@ class EquipmentService:
 
     def get_equipment_list(self):
         return self.repository.find_item_all()
+
+    def get_unit_id_by_name(self, unit_name: str) -> int | None:
+        return self.repository.find_unit_id_by_name(unit_name)

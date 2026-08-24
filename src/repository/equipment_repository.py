@@ -56,3 +56,26 @@ class EquipmentRepository:
 
         finally:
             conn.close()
+
+
+    def find_unit_id_by_name(self, unit_name: str) -> int | None:
+        conn = get_connection()
+
+        try:
+            cursor = conn.cursor()
+
+            cursor.execute("""
+                SELECT unit_id
+                FROM tbl_units
+                WHERE unit_name = ?
+            """, (unit_name,))
+
+            row = cursor.fetchone()
+
+            if row is None:
+                return None
+
+            return row[0]
+
+        finally:
+            conn.close()
