@@ -1,0 +1,13 @@
+name: Test Auto Merge
+
+on:
+  push:
+    branches:
+      - feature/tkinter
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: echo "Auto Merge Triggered!"
