@@ -439,19 +439,38 @@ class EquipmentRegistrationFrame(BaseFrame):
 
         unit_id = self.equipment_service.get_unit_id_by_name(unit_name)
 
+        if unit_id is None:
+            print("単位が見つかりません。")
+            return
+
         print("単位名:", unit_name)
         print("単位ID:", unit_id)
+
+        if category == "消耗品":
+            content_unit_id = self.equipment_service.get_unit_id_by_name(
+                content_unit_name
+            )
+
+            if content_unit_id is None:
+                print("内容量単位が見つかりません。")
+                return
+        else:
+            content_unit_id = None
         
+        item_specification = self.entry_specification.get()
+        model_no = self.entry_model_no.get()
+        remarks = self.entry_remarks.get("1.0", "end-1c")
+
         equipment_registration = EquipmentRegistration(
-            item_name=self.entry_name.get(),
-            item_specification=self.entry_specification.get(),
-            model_no=self.entry_model_no.get(),
-            category=self.entry_category.get(),
-            quantity=int(self.entry_quantity.get()),
-            unit_id=0,
-            quantity_per_unit=int(self.entry_quantity_per_unit.get()),
-            content_unit_id=0,
-            remarks=self.entry_remarks.get("1.0", "end-1c"),
+            item_name=item_name,
+            item_specification=item_specification,
+            model_no=model_no,
+            category=category,
+            quantity=int(quantity),
+            unit_id=unit_id,
+            quantity_per_unit=int(quantity_per_unit) if quantity_per_unit else None,
+            content_unit_id=content_unit_id,
+            remarks=remarks,
         )
 
         print(equipment_registration)
