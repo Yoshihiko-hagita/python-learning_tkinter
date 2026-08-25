@@ -473,4 +473,8 @@ class EquipmentRegistrationFrame(BaseFrame):
             remarks=remarks,
         )
 
-        print(equipment_registration)
+        result = self.equipment_service.register_equipment(
+            equipment_registration
+        )
+
+        print("登録結果:", result)

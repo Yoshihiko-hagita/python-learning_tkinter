@@ -1,5 +1,5 @@
 from src.db.connection_db import get_connection
-from src.models.equipment import Equipment
+from src.models.equipment import Equipment, EquipmentRegistration
 
 
 class EquipmentRepository:
@@ -57,18 +57,20 @@ class EquipmentRepository:
         finally:
             conn.close()
 
-
     def find_unit_id_by_name(self, unit_name: str) -> int | None:
         conn = get_connection()
 
         try:
             cursor = conn.cursor()
 
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT unit_id
                 FROM tbl_units
                 WHERE unit_name = ?
-            """, (unit_name,))
+            """,
+                (unit_name,),
+            )
 
             row = cursor.fetchone()
 
@@ -76,6 +78,83 @@ class EquipmentRepository:
                 return None
 
             return row[0]
+
+        finally:
+            conn.close()
+
+    def insert_equipment(self, equipment_registration: EquipmentRegistration):
+        item_id = self.generate_item_id(equipment_registration.category)
+        conn = get_connection()
+
+        try:
+            cursor = conn.cursor()
+
+            cursor.execute(
+                """
+                INSERT INTO tbl_items (
+                    item_id,
+                    item_name,
+                    item_specification,
+                    model_no,
+                    category,
+                    quantity,
+                    unit_id,
+                    quantity_per_unit,
+                    content_unit_id,
+                    loaned_qty,
+                    remarks
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    item_id,
+                    equipment_registration.item_name,
+                    equipment_registration.item_specification,
+                    equipment_registration.model_no,
+                    equipment_registration.category,
+                    equipment_registration.quantity,
+                    equipment_registration.unit_id,
+                    equipment_registration.quantity_per_unit,
+                    equipment_registration.content_unit_id,
+                    0,
+                    equipment_registration.remarks,
+                ),
+            )
+
+            conn.commit()
+            return True
+
+        finally:
+            conn.close()
+
+    def generate_item_id(self, category: str) -> str:
+        conn = get_connection()
+
+        try:
+            cursor = conn.cursor()
+
+            if category == "備品":
+                prefix = "EQ"
+            else:
+                prefix = "CON"
+
+            cursor.execute(
+                """
+                SELECT MAX(item_id)
+                FROM tbl_items
+                WHERE item_id LIKE ?
+                """,
+                (f"{prefix}%",),
+            )
+
+            row = cursor.fetchone()
+
+            if row[0] is None:
+                number = 1
+            else:
+                number = int(row[0][len(prefix) :]) + 1
+
+            return f"{prefix}{number:05d}"
 
         finally:
             conn.close()

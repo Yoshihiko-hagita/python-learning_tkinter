@@ -13,4 +13,4 @@ class EquipmentService:
         return self.repository.find_unit_id_by_name(unit_name)
 
     def register_equipment(self, equipment_registration: EquipmentRegistration):
-        return self.equipment_repository.insert_equipment(equipment_registration)
+        return self.repository.insert_equipment(equipment_registration)
