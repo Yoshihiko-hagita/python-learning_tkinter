@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import messagebox, ttk
 
 from src.gui.base_frame import BaseFrame
 from src.gui.common_validators.equipment_validator import EquipmentValidator
@@ -13,7 +13,7 @@ class EquipmentRegistrationFrame(BaseFrame):
         super().__init__(parent, frame_controller, bg="white")
 
         self.equipment_service = EquipmentService()
-        
+
         # =========================
         # コンテンツ(右側)-[Widget]
         # =========================
@@ -399,9 +399,7 @@ class EquipmentRegistrationFrame(BaseFrame):
         category = self.entry_category.get()
         quantity = self.entry_quantity.get()
         quantity_per_unit = self.entry_quantity_per_unit.get()
-        content_unit_name = self.entry_content_unit.get()
-        unit_id = self.find_unit_id_by_name(content_unit_name)
-        content_unit_id = self.find_unit_id_by_name(content_unit_name)
+        content_unit_name = self.entry_content_unit.get()                                                                                       
 
         response, message = EquipmentValidator.validate_registration(
             item_name,
@@ -414,6 +412,28 @@ class EquipmentRegistrationFrame(BaseFrame):
         if not response:
             messagebox.showerror("入力エラー", message)
             return
+
+        unit_name = self.entry_unit.get()
+
+        unit_id = self.equipment_service.get_unit_id_by_name(unit_name)
+
+        if unit_id is None:
+            messagebox.showerror("登録エラー", "単位が見つかりません。")
+            return
+
+        content_unit_id = None
+
+        if category == "消耗品":
+            content_unit_id = self.equipment_service.get_unit_id_by_name(
+                content_unit_name
+            )
+
+            if content_unit_id is None:
+                messagebox.showerror(
+                    "登録エラー",
+                    "内容量単位が見つかりません。"
+                )
+                return
         
         item_specification = self.entry_specification.get()
         model_no = self.entry_model_no.get()
@@ -431,8 +451,6 @@ class EquipmentRegistrationFrame(BaseFrame):
             remarks=remarks,
         )
 
-        result = self.equipment_service.register_equipment(
-            equipment_registration
-        )
+        result = self.equipment_service.register_equipment(equipment_registration)
 
         print("登録結果:", result)
