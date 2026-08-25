@@ -166,6 +166,8 @@ class EquipmentRegistrationFrame(BaseFrame):
             state="readonly",
         )
 
+        self.entry_category.bind("<MouseWheel>", lambda e: "break")
+
         self.entry_category.grid(row=7, column=1, sticky="w", padx=(20, 0))
 
         self.entry_category.set("")
@@ -219,6 +221,7 @@ class EquipmentRegistrationFrame(BaseFrame):
             values=["台", "個", "本", "冊", "箱", "セット", "パック"],
             state="readonly",
         )
+        self.entry_unit.bind("<MouseWheel>", lambda e: "break")
 
         self.entry_unit.grid(row=11, column=1, sticky="w", padx=(20, 0))
 
@@ -274,6 +277,8 @@ class EquipmentRegistrationFrame(BaseFrame):
             values=["個", "本", "冊", "箱", "セット", "パック"],
             state="readonly",
         )
+
+        self.entry_content_unit.bind("<MouseWheel>", lambda e: "break")
 
         self.entry_content_unit.grid(row=15, column=1, sticky="w", padx=(20, 0))
 
