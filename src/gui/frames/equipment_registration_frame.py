@@ -399,7 +399,7 @@ class EquipmentRegistrationFrame(BaseFrame):
         category = self.entry_category.get()
         quantity = self.entry_quantity.get()
         quantity_per_unit = self.entry_quantity_per_unit.get()
-        content_unit_name = self.entry_content_unit.get()                                                                                       
+        content_unit_name = self.entry_content_unit.get()
 
         response, message = EquipmentValidator.validate_registration(
             item_name,
@@ -429,12 +429,9 @@ class EquipmentRegistrationFrame(BaseFrame):
             )
 
             if content_unit_id is None:
-                messagebox.showerror(
-                    "登録エラー",
-                    "内容量単位が見つかりません。"
-                )
+                messagebox.showerror("登録エラー", "内容量単位が見つかりません。")
                 return
-        
+
         item_specification = self.entry_specification.get()
         model_no = self.entry_model_no.get()
         remarks = self.entry_remarks.get("1.0", "end-1c")
@@ -453,4 +450,5 @@ class EquipmentRegistrationFrame(BaseFrame):
 
         result = self.equipment_service.register_equipment(equipment_registration)
 
-        print("登録結果:", result)
+        if result:
+            messagebox.showinfo("登録完了", "備品を登録しました。")
