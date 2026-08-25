@@ -321,7 +321,11 @@ class EquipmentRegistrationFrame(BaseFrame):
         register_under_frame.grid(row=1, column=0, columnspan=2, sticky="ew")
 
         # 戻るボタン
-        self.button_back = ttk.Button(register_under_frame, text="戻る")
+        self.button_back = ttk.Button(
+            register_under_frame,
+            text="戻る",
+            command=lambda: self.frame_controller.show_frame("EquipmentListFrame"),
+            )
 
         self.button_back.grid(column=0, row=0, padx=(110, 50), pady=(30, 15))
 
@@ -335,7 +339,11 @@ class EquipmentRegistrationFrame(BaseFrame):
         self.button_register.grid(column=1, row=0, padx=(0, 50), pady=(30, 15))
 
         # キャンセルボタン
-        self.button_cancel = ttk.Button(register_under_frame, text="キャンセル")
+        self.button_cancel = ttk.Button(
+            register_under_frame, 
+            text="キャンセル",
+            command=self._clear_form,
+            )
 
         self.button_cancel.grid(column=2, row=0, padx=(0, 50), pady=(30, 15))
 
