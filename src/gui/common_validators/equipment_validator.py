@@ -67,3 +67,40 @@ class EquipmentValidator:
             return "内容量単位を選択してください。"
 
         return None
+
+    @staticmethod
+    def validate_registration(
+        item_name: str,
+        category: str,
+        quantity: str,
+        quantity_per_unit: str,
+        content_unit_name: str,
+    ) -> tuple[bool, str]:
+
+        error = EquipmentValidator.validate_item_name(item_name)
+        if error:
+            return False, error
+
+        error = EquipmentValidator.validate_category(category)
+        if error:
+            return False, error
+
+        error = EquipmentValidator.validate_quantity(quantity)
+        if error:
+            return False, error
+
+        error = EquipmentValidator.validate_quantity_per_unit(
+            quantity_per_unit,
+            category
+        )
+        if error:
+            return False, error
+
+        error = EquipmentValidator.validate_content_unit(
+            content_unit_name,
+            category
+        )
+        if error:
+            return False, error
+
+        return True, ""

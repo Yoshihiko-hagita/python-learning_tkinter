@@ -82,6 +82,40 @@ class EquipmentRepository:
         finally:
             conn.close()
 
+    def generate_item_id(self, category: str) -> str:
+        conn = get_connection()
+
+        try:
+            cursor = conn.cursor()
+
+            if category == "備品":
+                prefix = "EQ"
+                digit = 5
+            else:
+                prefix = "CON"
+                digit = 4
+
+            cursor.execute(
+                """
+                SELECT MAX(item_id)
+                FROM tbl_items
+                WHERE item_id LIKE ?
+                """,
+                (f"{prefix}%",),
+            )
+
+            row = cursor.fetchone()
+
+            if row[0] is None:
+                number = 1
+            else:
+                number = int(row[0][len(prefix) :]) + 1
+
+            return f"{prefix}{number:0{digit}d}"
+
+        finally:
+            conn.close()
+
     def insert_equipment(self, equipment_registration: EquipmentRegistration):
         item_id = self.generate_item_id(equipment_registration.category)
         conn = get_connection()
@@ -122,7 +156,7 @@ class EquipmentRepository:
             )
 
             conn.commit()
-            return True
+            return item_id
 
         except Exception:
             conn.rollback()
@@ -131,36 +165,4 @@ class EquipmentRepository:
         finally:
             conn.close()
 
-    def generate_item_id(self, category: str) -> str:
-        conn = get_connection()
 
-        try:
-            cursor = conn.cursor()
-
-            if category == "備品":
-                prefix = "EQ"
-                digit = 5
-            else:
-                prefix = "CON"
-                digit = 4
-
-            cursor.execute(
-                """
-                SELECT MAX(item_id)
-                FROM tbl_items
-                WHERE item_id LIKE ?
-                """,
-                (f"{prefix}%",),
-            )
-
-            row = cursor.fetchone()
-
-            if row[0] is None:
-                number = 1
-            else:
-                number = int(row[0][len(prefix) :]) + 1
-
-            return f"{prefix}{number:0{digit}d}"
-
-        finally:
-            conn.close()

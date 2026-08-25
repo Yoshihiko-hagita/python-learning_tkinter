@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 from src.gui.base_frame import BaseFrame
 from src.gui.common_validators.equipment_validator import EquipmentValidator
@@ -396,66 +396,24 @@ class EquipmentRegistrationFrame(BaseFrame):
     def _on_register(self):
 
         item_name = self.entry_name.get()
-        error = EquipmentValidator.validate_item_name(item_name)
-
-        if error:
-            print(error)
-            return
-
         category = self.entry_category.get()
-        error = EquipmentValidator.validate_category(category)
-
-        if error:
-            print(error)
-            return
-
         quantity = self.entry_quantity.get()
-        error = EquipmentValidator.validate_quantity(quantity)
-
-        if error:
-            print(error)
-            return
-
         quantity_per_unit = self.entry_quantity_per_unit.get()
-        error = EquipmentValidator.validate_quantity_per_unit(
-            quantity_per_unit,
-            category
-        )
-
-        if error:
-            print(error)
-            return
-
         content_unit_name = self.entry_content_unit.get()
-        error = EquipmentValidator.validate_content_unit(
+        unit_id = self.find_unit_id_by_name(content_unit_name)
+        content_unit_id = self.find_unit_id_by_name(content_unit_name)
+
+        response, message = EquipmentValidator.validate_registration(
+            item_name,
+            category,
+            quantity,
+            quantity_per_unit,
             content_unit_name,
-            category
         )
 
-        if error:
-            print(error)
+        if not response:
+            messagebox.showerror("入力エラー", message)
             return
-        unit_name = self.entry_unit.get()
-
-        unit_id = self.equipment_service.get_unit_id_by_name(unit_name)
-
-        if unit_id is None:
-            print("単位が見つかりません。")
-            return
-
-        print("単位名:", unit_name)
-        print("単位ID:", unit_id)
-
-        if category == "消耗品":
-            content_unit_id = self.equipment_service.get_unit_id_by_name(
-                content_unit_name
-            )
-
-            if content_unit_id is None:
-                print("内容量単位が見つかりません。")
-                return
-        else:
-            content_unit_id = None
         
         item_specification = self.entry_specification.get()
         model_no = self.entry_model_no.get()
