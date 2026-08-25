@@ -124,6 +124,10 @@ class EquipmentRepository:
             conn.commit()
             return True
 
+        except Exception:
+            conn.rollback()
+            raise
+
         finally:
             conn.close()
 
@@ -135,8 +139,10 @@ class EquipmentRepository:
 
             if category == "備品":
                 prefix = "EQ"
+                digit = 5
             else:
                 prefix = "CON"
+                digit = 4
 
             cursor.execute(
                 """
@@ -154,7 +160,7 @@ class EquipmentRepository:
             else:
                 number = int(row[0][len(prefix) :]) + 1
 
-            return f"{prefix}{number:05d}"
+            return f"{prefix}{number:0{digit}d}"
 
         finally:
             conn.close()
