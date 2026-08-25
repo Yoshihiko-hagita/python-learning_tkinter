@@ -4,6 +4,7 @@ from tkinter import ttk
 from src.gui.base_frame import BaseFrame
 from src.gui.common_validators.equipment_validator import EquipmentValidator
 from src.models.equipment import EquipmentRegistration
+from src.service.equipment_service import EquipmentService
 
 
 class EquipmentRegistrationFrame(BaseFrame):
@@ -11,6 +12,8 @@ class EquipmentRegistrationFrame(BaseFrame):
 
         super().__init__(parent, frame_controller, bg="white")
 
+        self.equipment_service = EquipmentService()
+        
         # =========================
         # コンテンツ(右側)-[Widget]
         # =========================
@@ -432,7 +435,12 @@ class EquipmentRegistrationFrame(BaseFrame):
         if error:
             print(error)
             return
+        unit_name = self.entry_unit.get()
 
+        unit_id = self.equipment_service.get_unit_id_by_name(unit_name)
+
+        print("単位名:", unit_name)
+        print("単位ID:", unit_id)
         
         equipment_registration = EquipmentRegistration(
             item_name=self.entry_name.get(),
