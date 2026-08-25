@@ -168,7 +168,7 @@ class EquipmentRegistrationFrame(BaseFrame):
 
         self.entry_category.grid(row=7, column=1, sticky="w", padx=(20, 0))
 
-        self.entry_category.current(0)
+        self.entry_category.set("")
 
         self.entry_category.bind("<<ComboboxSelected>>", self._on_category_changed)
 
@@ -222,7 +222,7 @@ class EquipmentRegistrationFrame(BaseFrame):
 
         self.entry_unit.grid(row=11, column=1, sticky="w", padx=(20, 0))
 
-        self.entry_unit.current(0)
+        self.entry_unit.set("")
 
         # =========================
         # 内容量-[Widget]
@@ -364,7 +364,15 @@ class EquipmentRegistrationFrame(BaseFrame):
 
         category = self.entry_category.get()
 
-        if category == "備品":
+        if category == "":
+            # カテゴリ未選択の場合
+            self.entry_quantity_per_unit.configure(state="disabled")
+            self.entry_content_unit.configure(state="disabled")
+
+            self.label_quantity_per_unit_important_notes.configure(text="")
+            self.label_content_unit_important_notes.configure(text="")
+
+        elif category == "備品":
             # 内容量を無効化
             self.entry_quantity_per_unit.configure(state="disabled")
 
@@ -452,3 +460,18 @@ class EquipmentRegistrationFrame(BaseFrame):
 
         if result:
             messagebox.showinfo("登録完了", "備品を登録しました。")
+            self._clear_form()
+
+    def _clear_form(self):
+        self.entry_name.delete(0, "end")
+        self.entry_specification.delete(0, "end")
+        self.entry_model_no.delete(0, "end")
+        self.entry_quantity.delete(0, "end")
+        self.entry_quantity_per_unit.delete(0, "end")
+        self.entry_remarks.delete("1.0", "end")
+
+        self.entry_category.set("")
+        self.entry_unit.set("")
+        self.entry_content_unit.set("")
+
+        self._on_category_changed() 
