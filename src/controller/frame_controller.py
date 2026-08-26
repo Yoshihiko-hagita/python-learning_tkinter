@@ -13,6 +13,7 @@ from src.gui.frames.lending_frame import LendingFrame
 class FrameController:
     def __init__(self, parent):
         self.parent = parent
+        self.current_user = None
 
     # =========================
     # 画面初期化
@@ -47,6 +48,9 @@ class FrameController:
         mode = kwargs.get("mode")
         user = kwargs.get("user")
         equipment = kwargs.get("equipment")
+
+        if user is not None:
+            self.current_user = user
 
         frame.mode = mode
 

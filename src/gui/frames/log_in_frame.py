@@ -145,10 +145,13 @@ class LogInFrame(tk.Frame):
             self.entry_password.focus_set()
             return
 
-        success, message = login_service.login_process(employee_id, password)
+        success, user = login_service.login_process(employee_id, password)
 
         if not success:
             messagebox.showerror("ログインエラー", message)
             return
 
-        self.frame_controller.show_frame("HomeFrame")
+        self.frame_controller.show_frame(
+            "HomeFrame",
+            user=user,
+        )

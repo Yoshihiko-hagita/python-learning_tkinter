@@ -45,4 +45,4 @@ def login_process(employee_id, password):
     ):
         return (False,"社員IDまたはパスワードが違います。")
 
-    return (True,None)
+    return (True, user)
