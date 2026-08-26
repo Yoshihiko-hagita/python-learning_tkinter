@@ -5,7 +5,7 @@ from src.gui.frames.home_frame import HomeFrame
 from src.gui.frames.log_in_frame import LogInFrame
 from src.gui.frames.user_form_frame import UserFormFrame
 from src.gui.frames.user_management_frame import UserManagementFrame
-
+from src.gui.frames.lending_frame import LendingFrame
 
 # =========================
 # 画面コントロール
@@ -25,6 +25,7 @@ class FrameController:
             HomeFrame,
             EquipmentListFrame,
             EquipmentRegistrationFrame,
+            LendingFrame,
             UserManagementFrame,
             UserFormFrame,
         ):
@@ -45,6 +46,7 @@ class FrameController:
 
         mode = kwargs.get("mode")
         user = kwargs.get("user")
+        equipment = kwargs.get("equipment")
 
         frame.mode = mode
 
@@ -61,6 +63,10 @@ class FrameController:
         elif name == "EquipmentRegistrationFrame":
             self.parent.title(f"{APP_TITLE} - [備品登録画面]")
 
+        elif name == "LendingFrame":
+            self.parent.title(f"{APP_TITLE} - [貸出画面]")
+            frame.set_equipment_info(equipment)
+            
         elif name == "UserManagementFrame":
             self.parent.title(f"{APP_TITLE} - [ユーザー管理画面]")
             frame.search_user()

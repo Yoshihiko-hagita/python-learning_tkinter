@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 from src.gui.base_frame import BaseFrame
 from src.service.equipment_service import EquipmentService
@@ -87,10 +87,14 @@ class EquipmentListFrame(BaseFrame):
         self.button_Lending = ttk.Button(
             under_frame,
             text="貸出",
+            command=self._on_lending,
         )
 
         self.button_Lending.grid(column=1, row=0, padx=(0, 30))
 
+    # ----------------------------
+    # 備品一覧-[Method]
+    # ----------------------------
     def load_equipment_list(self):
 
         # 既存行削除
@@ -116,7 +120,7 @@ class EquipmentListFrame(BaseFrame):
 
             available_qty = equipment.quantity - equipment.loaned_qty
             available_qty = (
-                "-" if available_qty <= 0 else f"{available_qty}{equipment.unit_name}"
+                "0" if available_qty <= 0 else f"{available_qty}{equipment.unit_name}"
             )
             remarks = "" if equipment.remarks is None else equipment.remarks
 
@@ -131,3 +135,38 @@ class EquipmentListFrame(BaseFrame):
             )
 
             self.tree.insert("", "end", values=values)
+
+
+    # ----------------------------
+    # 貸出ボタン-[Method]
+    # ----------------------------
+    def _on_lending(self):
+        selected_items = self.tree.selection()
+
+        # 項目が選択されていない
+        if not selected_items:
+            messagebox.showwarning(
+                "貸出エラー",
+                "項目を選択して、再度ボタンを押下してください。",
+            )
+            return
+
+        selected_item = self.tree.item(selected_items[0])
+        values = selected_item["values"]
+
+        # 貸出可能数を取得
+        available_qty = values[5]
+
+        # 貸出可能数が0の場合
+        if available_qty == "0":
+            messagebox.showwarning(
+                "貸出不可",
+                "在庫が無いため、貸出不可です。",
+            )
+            return
+
+        # 貸出画面へ
+        self.frame_controller.show_frame(
+            "LendingFrame",
+            equipment=values,
+        )
