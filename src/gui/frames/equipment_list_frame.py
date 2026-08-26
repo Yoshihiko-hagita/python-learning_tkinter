@@ -36,7 +36,6 @@ class EquipmentListFrame(BaseFrame):
             "item_specification",
             "model_no",
             "category",
-            "quantity",
             "available_qty",
             "remarks",
         )
@@ -50,7 +49,6 @@ class EquipmentListFrame(BaseFrame):
         self.tree.heading("item_specification", text="仕様 / 規格")
         self.tree.heading("model_no", text="品番")
         self.tree.heading("category", text="カテゴリ")
-        self.tree.heading("quantity", text="在庫数")
         self.tree.heading("available_qty", text="貸出可能数")
         self.tree.heading("remarks", text="備考")
 
@@ -59,7 +57,6 @@ class EquipmentListFrame(BaseFrame):
         self.tree.column("item_specification", width=230)
         self.tree.column("model_no", width=160)
         self.tree.column("category", width=80, anchor="center")
-        self.tree.column("quantity", width=80, anchor="center")
         self.tree.column("available_qty", width=95, anchor="center")
         self.tree.column("remarks", width=150)
 
@@ -73,13 +70,15 @@ class EquipmentListFrame(BaseFrame):
         # underframe
         # =========================
         under_frame = ttk.Frame(equipment_list_frame)
-        under_frame.pack(fill="both",expand=True)
+        under_frame.pack(fill="both", expand=True)
 
         # 備品登録ボタン
         self.button_new_equipment = ttk.Button(
             under_frame,
             text="備品登録",
-            command=lambda: self.frame_controller.show_frame("EquipmentRegistrationFrame"),
+            command=lambda: self.frame_controller.show_frame(
+                "EquipmentRegistrationFrame"
+            ),
         )
 
         self.button_new_equipment.grid(column=0, row=0, padx=(150, 30), pady=(15, 15))
@@ -115,12 +114,9 @@ class EquipmentListFrame(BaseFrame):
 
             model_no = "-" if equipment.model_no is None else equipment.model_no
 
-            quantity = f"{equipment.quantity}{equipment.unit_name}"
             available_qty = equipment.quantity - equipment.loaned_qty
             available_qty = (
-                "-"
-                if equipment.item_id.startswith("CON")
-                else f"{available_qty}{equipment.unit_name}"
+                "-" if available_qty <= 0 else f"{available_qty}{equipment.unit_name}"
             )
             remarks = "" if equipment.remarks is None else equipment.remarks
 
@@ -130,7 +126,6 @@ class EquipmentListFrame(BaseFrame):
                 item_specification,
                 model_no,
                 equipment.category,
-                quantity,
                 available_qty,
                 remarks,
             )
