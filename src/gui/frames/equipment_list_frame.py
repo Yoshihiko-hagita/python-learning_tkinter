@@ -120,7 +120,7 @@ class EquipmentListFrame(BaseFrame):
 
             available_qty = equipment.quantity - equipment.loaned_qty
             available_qty = (
-                "0" if available_qty <= 0 else f"{available_qty}{equipment.unit_name}"
+                "-" if available_qty <= 0 else f"{available_qty}{equipment.unit_name}"
             )
             remarks = "" if equipment.remarks is None else equipment.remarks
 
@@ -158,7 +158,7 @@ class EquipmentListFrame(BaseFrame):
         available_qty = values[5]
 
         # 貸出可能数が0の場合
-        if available_qty == "0":
+        if available_qty == "-":
             messagebox.showwarning(
                 "貸出不可",
                 "在庫が無いため、貸出不可です。",
